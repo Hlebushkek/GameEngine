@@ -1,0 +1,3 @@
+C:/Users/hlebushkek/Documents/GameEngine/Engine/vendors/glad/build/CMakeFiles/glad.dir
+C:/Users/hlebushkek/Documents/GameEngine/Engine/vendors/glad/build/CMakeFiles/edit_cache.dir
+C:/Users/hlebushkek/Documents/GameEngine/Engine/vendors/glad/build/CMakeFiles/rebuild_cache.dir

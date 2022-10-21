@@ -3,11 +3,11 @@
 class Sandbox : public Engine::Application
 {
 public:
-    Sandbox() {}
+    Sandbox(const char* title, const int width, const int height) : Engine::Application(title, width, height) {}
     ~Sandbox() {}
 };
 
 Engine::Application* Engine::CreateApplication()
 {
-    return new Sandbox();
+    return new Sandbox("MineEngine", 600, 400);
 }

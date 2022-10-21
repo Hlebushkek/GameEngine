@@ -1,0 +1,6 @@
+[submodule "Engine/vendors/glm"]
+	path = Engine/vendors/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "Engine/vendors/SDL"]
+	path = Engine/vendors/SDL
+	url = https://github.com/libsdl-org/SDL

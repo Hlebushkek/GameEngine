@@ -7,7 +7,7 @@ namespace Engine
     {
         this->viewMatrix = glm::mat4(1.f);
 
-        this->movementSpeed = 25.f;
+        this->movementSpeed = 100.f;
         this->sensitivity = 50.f;
 
         this->worldUp = worldUp;
@@ -57,8 +57,6 @@ namespace Engine
 
     void Camera::updateMouseMotionInput(const float& dt, const int& offsetX, const int& offsetY)
     {
-        //std::cout << offsetX << " " << offsetY << std::endl;
-        
         this->pitch -= static_cast<GLfloat>(offsetY * this->sensitivity * dt);
         this->yaw += static_cast<GLfloat>(offsetX * this->sensitivity * dt);
 

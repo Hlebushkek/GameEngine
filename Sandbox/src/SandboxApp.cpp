@@ -1,13 +1,21 @@
 #include <Engine.hpp>
+#include <include/EntryPoint.hpp>
+#include "../include/SandBox.hpp"
+#include "../include/BackgroundLayer.hpp"
+#include "../include/InterfaceLayer.hpp"
 
-class Sandbox : public Engine::Application
+
+SandBox::SandBox(const char* title, const int width, const int height)
+    : Engine::Application(title, width, height)
 {
-public:
-    Sandbox(const char* title, const int width, const int height) : Engine::Application(title, width, height) {}
-    ~Sandbox() {}
-};
+    BackgroundLayer* backgroundLayer = new BackgroundLayer();
+    PushLayer(backgroundLayer);
+
+    InterfaceLayer* interfaceLayer = new InterfaceLayer();
+    PushLayer(interfaceLayer);
+}
 
 Engine::Application* Engine::CreateApplication()
 {
-    return new Sandbox("MineEngine", 600, 400);
+    return new SandBox("MineEngine", 600, 400);
 }

@@ -13,10 +13,12 @@ namespace Engine
         Layer(const char* name);
         virtual ~Layer();
 
-        virtual void OnAttach();
-        virtual void OnDetach();
-        virtual void Update();
-        virtual void OnEvent(Event& event);
+        virtual void OnAttach() {}
+        virtual void OnDetach() {}
+        virtual void Update() {}
+        virtual void OnEvent(SDL_Event& event) {}
+
+        virtual void OnImGuiRender() {}
 
         inline const char* GetName() const { return layerName; }
 

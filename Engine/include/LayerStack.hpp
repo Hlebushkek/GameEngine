@@ -26,6 +26,8 @@ namespace Engine
 		std::vector<Layer*>::const_iterator end()	const { return layers.end(); }
 		std::vector<Layer*>::const_reverse_iterator rbegin() const { return layers.rbegin(); }
 		std::vector<Layer*>::const_reverse_iterator rend() const { return layers.rend(); }
+
+		Layer* back() const { return layers.back(); }
 	private:
 		std::vector<Layer*> layers;
 		unsigned int layerCounter = 0;

@@ -1,4 +1,5 @@
 #include "../include/Camera.hpp"
+#include "../include/Vertex.hpp"
 #include <iostream>
 
 namespace Engine
@@ -35,7 +36,7 @@ namespace Engine
 
     void Camera::move(const float& dt, const int direction)
     {
-        std::cout << "move " << dt << std::endl;
+        // std::cout << "move " << dt << std::endl;
         switch (direction)
         {
         case FORWARD:
@@ -49,6 +50,12 @@ namespace Engine
             break;
         case RIGHT:
             this->position += this->right * this->movementSpeed * dt;
+            break;
+        case UP:
+            this->position += this->up * this->movementSpeed * dt;
+            break;
+        case DOWN:
+            this->position -= this->up * this->movementSpeed * dt;
             break;
         default:
             break;

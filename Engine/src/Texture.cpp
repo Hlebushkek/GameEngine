@@ -33,7 +33,7 @@ namespace Engine
         {
             glDeleteTextures(1, &this->id);
         }
-        std::cout << "Before IMG_LOAD" << std::endl;
+        
         SDL_Surface *textureImage = IMG_Load(fileName);
         std::cout << "After IMG_LOAD" << std::endl;
         if (textureImage)
@@ -52,8 +52,8 @@ namespace Engine
 
             glTexParameteri(this->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(this->type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(this->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(this->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(this->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+            glTexParameteri(this->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
             glTexImage2D(this->type, 0, imgFormat, this->width, this->height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
             glGenerateMipmap(this->type);
@@ -61,7 +61,7 @@ namespace Engine
 
         glActiveTexture(0);
         glBindTexture(this->type, 0);
-        SDL_FreeSurface(textureImage);
-        std::cout << "AFTER FREE SURFACE " << fileName << std::endl;
+        // SDL_FreeSurface(textureImage);
+        // std::cout << "SDL_FreeSurface: " << fileName << std::endl;
     }
 }

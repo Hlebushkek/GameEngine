@@ -7,9 +7,6 @@
 
 namespace Engine
 {
-
-    enum Direction { FORWARD = 0, BACKWARD, LEFT, RIGHT };
-
     class Camera {
     public:
         Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp);

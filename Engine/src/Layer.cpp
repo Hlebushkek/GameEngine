@@ -7,5 +7,15 @@ namespace Engine
         this->layerName = name;
     }
 
-    Layer::~Layer() {};
+    void Layer::Render(Shader* shader)
+    {
+        for (IRenderable* object : this->renderableObjects)
+            object->Render(shader);
+    }
+
+    Layer::~Layer()
+    {
+        for (IRenderable* object : this->renderableObjects)
+            delete object;
+    };
 }

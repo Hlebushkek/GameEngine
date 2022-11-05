@@ -18,7 +18,7 @@
 namespace Engine
 {
     enum Shader_Enum { SHADER_CORE_PROGRAM = 0 };
-    enum Texture_Enum { TEX_PUSHEEN = 0 , TEX_PUSHEEN_SPEC, TEX_CONTAINER, TEX_CONTAINER_SPEC};
+    enum Texture_Enum { GRASS = 0 , GRASS_SPECULAR, BRICK, WOOD, PAVERN, BLOCKB};
     enum Material_Enum { MAT_0 = 0 };
     enum Mesh_Enum { MESH_QUAD = 0 };
 
@@ -114,7 +114,6 @@ namespace Engine
         void InitShaders();
         void InitTextures();
         void InitMaterials();
-        void InitMeshes();
         
         void InitLights();
         void InitUniforms();

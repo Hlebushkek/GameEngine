@@ -2,9 +2,8 @@
 
 #include <vector>
 #include <array>
-#include <string>
-
 #include <glad/glad.h>
+
 #include "Vertex.hpp"
 
 namespace Engine

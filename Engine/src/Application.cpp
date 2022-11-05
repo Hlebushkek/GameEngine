@@ -1,5 +1,6 @@
 #include "../include/Application.hpp"
 #include "../include/Rect.hpp"
+#include "../include/Cube.hpp"
 
 namespace Engine
 {
@@ -17,7 +18,7 @@ namespace Engine
         this->camFront = glm::vec3(0.f, 0.f, -1.f);
 
         this->fov = 90.f;
-        this->nearPlane = 0.1f;
+        this->nearPlane = 0.01f;
         this->farPlane = 1000.f;
 
         this->deltaTime = 0.f;
@@ -32,7 +33,6 @@ namespace Engine
         this->InitShaders();
         this->InitTextures();
         this->InitMaterials();
-        this->InitMeshes();
         this->InitLights();
 
         this->InitUniforms();
@@ -129,24 +129,16 @@ namespace Engine
 
     void Application::InitTextures()
     {
-        this->textures.push_back(new Texture("resources/pusheen.png", GL_TEXTURE_2D));
-        std::cout << "After Push first texture" << std::endl;
-        // this->textures.push_back(new Texture("resources/pusheen_specular.png", GL_TEXTURE_2D));
-        // this->textures.push_back(new Texture("resources/container.png", GL_TEXTURE_2D));
-        // std::cout << "After Push second texture" << std::endl;
-        // this->textures.push_back(new Texture("resources/container_specular.png", GL_TEXTURE_2D));
+        this->textures.push_back(new Texture("resources/Grass.png", GL_TEXTURE_2D));
+        this->textures.push_back(new Texture("resources/Grass_Specular.png", GL_TEXTURE_2D));
+        this->textures.push_back(new Texture("resources/WoodLog.png", GL_TEXTURE_2D));
+        this->textures.push_back(new Texture("resources/Pavern.png", GL_TEXTURE_2D));
     }
 
     void Application::InitMaterials()
     {
         this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
             0, 1));
-    }
-
-    void Application::InitMeshes()
-    {
-        Primitive* rect = new Rect();
-        this->meshes.push_back(new Mesh(rect, glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f)));
     }
 
     void Application::InitLights()
@@ -224,10 +216,10 @@ namespace Engine
                     this->camera.move(this->deltaTime, RIGHT);
                     break;
                 case SDLK_SPACE:
-                    this->camPosition.y += 0.05f;
+                    this->camera.move(this->deltaTime, UP);
                     break;
                 case SDLK_c:
-                    this->camPosition.y -= 0.05f;
+                    this->camera.move(this->deltaTime, DOWN);
                     break;
                 default:
                     break;
@@ -255,7 +247,7 @@ namespace Engine
 
         this->mouseOffsetX = this->event.motion.xrel;
         this->mouseOffsetY = this->event.motion.yrel;
-        std::cout << mouseOffsetX << " " << mouseOffsetY << std::endl;
+        // std::cout << mouseOffsetX << " " << mouseOffsetY << std::endl;
         this->lastMouseX = this->mouseX;
         this->lastMouseY = this->mouseY;
     }
@@ -273,8 +265,20 @@ namespace Engine
 
         this->UpdateUniforms();
 
+        this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+
+        //Use program
+        this->shaders[SHADER_CORE_PROGRAM]->use();
+
+        //Activate texture
+        this->textures[GRASS]->bind(0);
+        this->textures[GRASS_SPECULAR]->bind(1);
+
         for (Layer* layer : layerStack)
+        {
             layer->Update();
+            layer->Render(this->shaders[SHADER_CORE_PROGRAM]);
+        }
 
         imGuiLayer->Begin();
         {
@@ -283,18 +287,6 @@ namespace Engine
         }
         imGuiLayer->End();
         
-        this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-
-        //Use program
-        this->shaders[SHADER_CORE_PROGRAM]->use();
-
-        //Activate texture
-        this->textures[TEX_PUSHEEN]->bind(0);
-        this->textures[TEX_PUSHEEN]->bind(1);
-
-        //Render
-        this->meshes[MESH_QUAD]->render(this->shaders[SHADER_CORE_PROGRAM]);
-
         glFlush();
 
         SDL_GL_SwapWindow(window);
@@ -321,11 +313,11 @@ namespace Engine
         this->shaders[SHADER_CORE_PROGRAM]->use();
 
         //Activate texture
-        this->textures[TEX_PUSHEEN]->bind(0);
-        this->textures[TEX_PUSHEEN_SPEC]->bind(1);
+        this->textures[GRASS]->bind(0);
+        this->textures[GRASS_SPECULAR]->bind(1);
 
         //Render
-        this->meshes[MESH_QUAD]->render(this->shaders[SHADER_CORE_PROGRAM]);
+        this->meshes[MESH_QUAD]->Render(this->shaders[SHADER_CORE_PROGRAM]);
 
         glFlush();
 

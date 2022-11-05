@@ -13,7 +13,7 @@ namespace Engine
         this->initVAO(vertexArray, nrOfVertices, indexArray, nrOfIndices);
         this->updateModelMatrix();
     }
-    Mesh::Mesh(Primitive* primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+    Mesh::Mesh(Primitive& primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
     {
         this->position = position;
         this->rotation = rotation;
@@ -33,7 +33,7 @@ namespace Engine
     }
 
     //PUBLIC
-    void Mesh::render(Shader* shader)
+    void Mesh::Render(Shader* shader)
     {
         this->updateModelMatrix();
         this->updateUniforms(shader);
@@ -127,27 +127,25 @@ namespace Engine
 
         glBindVertexArray(0);
     }
-    void Mesh::initVAO(Primitive* primitive)
+    void Mesh::initVAO(Primitive& primitive)
     {
         //Set variables
-        this->nrOfVertices = primitive->getNumberOfVertices();
-        this->nrOfIndices = primitive->getNumberOfIndices();
-
-        std::cout << nrOfVertices << std::endl;
-        std::cout << nrOfIndices << std::endl;
+        this->nrOfVertices = primitive.getNumberOfVertices();
+        this->nrOfIndices = primitive.getNumberOfIndices();
+        
         //VAO
         glCreateVertexArrays(1, &this->VAO);
         glBindVertexArray(this->VAO);
         //VBO
         glGenBuffers(1, &this->VBO);
         glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-        glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices * sizeof(Vertex), primitive->getVertices(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices * sizeof(Vertex), primitive.getVertices(), GL_STATIC_DRAW);
         //EBO
         if (this->nrOfIndices > 0)
         {
             glGenBuffers(1, &this->EBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), primitive->getIndices(), GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), primitive.getIndices(), GL_STATIC_DRAW);
         }
 
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));

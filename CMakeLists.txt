@@ -13,26 +13,25 @@ include_directories(
     ${PROJECT_NAME}/vendors/glad/include ${PROJECT_NAME}/vendors/glm
     ${PROJECT_NAME}/vendors/imgui
 )
-file(GLOB SOURCES
-    "${PROJECT_NAME}/vendors/imgui/*.cpp" "${PROJECT_NAME}/vendors/imgui/*.h"
-    "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_sdl.cpp" "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_sdl.h"
-    "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_opengl3.cpp" "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_opengl3.h"
-    "${PROJECT_NAME}/src/*.cpp" "${PROJECT_NAME}/include/*.hpp"
-)
+file(GLOB SOURCES "${PROJECT_NAME}/src/*.cpp" "${PROJECT_NAME}/include/*.hpp")
 add_definitions(-DENGINE_BUILD_DLL)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
-target_link_libraries(${PROJECT_NAME} 
-    -LC:/Users/hlebushkek/Documents/GameEngine/Engine/vendors/SDL/build/FinalBuild/lib
-    -lSDL2maind -lSDL2d
-)
-target_link_libraries(${PROJECT_NAME} -lSDL2_image)
 
 add_subdirectory(${PROJECT_NAME}/vendors/glad/)
 target_link_libraries(${PROJECT_NAME} glad)
 
 add_subdirectory(${PROJECT_NAME}/vendors/glm/)
 target_link_libraries(${PROJECT_NAME} glm)
+
+file(GLOB IMGUI_SOURCES "${PROJECT_NAME}/vendors/imgui/*.cpp" "${PROJECT_NAME}/vendors/imgui/*.h"
+    "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_sdl.cpp" "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_sdl.h"
+    "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_opengl3.cpp" "${PROJECT_NAME}/vendors/imgui/backends/imgui_impl_opengl3.h"
+)
+add_library(imgui STATIC ${IMGUI_SOURCES})
+
+target_link_libraries(${PROJECT_NAME} -LC:/Users/hlebushkek/Documents/GameEngine/Engine/vendors/SDL/build/FinalBuild/lib)
+target_link_libraries(${PROJECT_NAME} imgui -lSDL2maind -lSDL2d -lSDL2_image)
 
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD

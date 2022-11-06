@@ -37,4 +37,6 @@ add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_CURRENT_BINARY_DIR}/libEngine.dll
-                ../Sandbox/libEngine.dll)
+                Sandbox/libEngine.dll)
+
+add_subdirectory(Sandbox)

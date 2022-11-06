@@ -1,28 +1,15 @@
 #include "../include/ChunkRenderer.hpp"
+#include "../include/Block.hpp"
 
 ChunkRenderer::ChunkRenderer(glm::uvec3 chunkSize)
     : CHUNK_SIZE(chunkSize)
 {
-    InitCubeArray();
-    FillChunk();
+    textures.emplace_back(new Engine::Texture("Grass.png", GL_TEXTURE_2D));
+
+    InitBlocksArray();
 }
 
-void ChunkRenderer::InitCubeArray()
-{
-    this->meshArray = new Engine::Mesh***[CHUNK_SIZE.x];
- 
-    for (size_t i = 0; i < CHUNK_SIZE.x; i++)
-    {
-        meshArray[i] = new Engine::Mesh**[CHUNK_SIZE.y];
- 
-        for (size_t j = 0; j < CHUNK_SIZE.y; j++)
-        {
-            meshArray[i][j] = new Engine::Mesh*[CHUNK_SIZE.z];
-        }
-    }
-}
-
-void ChunkRenderer::FillChunk()
+ChunkRenderer::~ChunkRenderer()
 {
     for (size_t i = 0; i < CHUNK_SIZE.x; i++)
     {
@@ -30,20 +17,49 @@ void ChunkRenderer::FillChunk()
         {
             for (size_t k = 0; k < CHUNK_SIZE.z; k++)
             {
-                Engine::Primitive cube = Engine::Cube();
-                this->meshArray[i][j][k] = new Engine::Mesh(cube, glm::vec3(0.0625f * i, 0.0625f * j, 0.0625f * k), glm::vec3(0.f), glm::vec3(0.0625f));
+                delete this->blocks[i][j][k];
+            }
+            delete this->blocks[i][j];
+        }
+        delete this->blocks[i];
+    }
+}
+
+void ChunkRenderer::InitBlocksArray()
+{
+    this->blocks = new Block***[CHUNK_SIZE.x];
+
+    for (size_t i = 0; i < CHUNK_SIZE.x; i++)
+    {
+        blocks[i] = new Block**[CHUNK_SIZE.y];
+ 
+        for (size_t j = 0; j < CHUNK_SIZE.y; j++)
+        {
+            blocks[i][j] = new Block*[CHUNK_SIZE.z];
+            for (size_t k = 0; k < CHUNK_SIZE.z; k++)
+            {
+                this->blocks[i][j][k] = new Block(0, textures[0], glm::vec3(0.0625f * i, 0.0625f * j, 0.0625f * k));
+            }
+        }
+    }
+
+    for (size_t i = 0; i < CHUNK_SIZE.x; i++)
+    {
+        for (size_t j = 0; j < CHUNK_SIZE.y; j++)
+        {
+            for (size_t k = 0; k < CHUNK_SIZE.z; k++)
+            {
                 BlockWasPlacedAt(glm::uvec3(i, j, k));
             }
         }
     }
-    UpdateBlockAt(glm::uvec3(CHUNK_SIZE.x-1, CHUNK_SIZE.y-1, CHUNK_SIZE.z-1));
 }
 
 bool ChunkRenderer::IsBlockFilled(int x, int y, int z)
 {
     if (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE.x || y >= CHUNK_SIZE.y || z >= CHUNK_SIZE.z) return false;
 
-    if (meshArray[x][y][z]) return true;
+    if (blocks[x][y][z]) return true;
     else return false;
 }
 
@@ -76,7 +92,7 @@ void ChunkRenderer::UpdateNearbyBlocksFor(glm::uvec3 pos)
 
 void ChunkRenderer::UpdateBlockAt(int x, int y, int z)
 {
-    if (x < 0 || y < 0 || z < 0 || x >= CHUNK_SIZE.x || y >= CHUNK_SIZE.y || z >= CHUNK_SIZE.z) return;
+    if (!IsBlockFilled(x, y, z)) return;
 
     int blockFlags = 0;
 
@@ -89,10 +105,8 @@ void ChunkRenderer::UpdateBlockAt(int x, int y, int z)
     if (IsBlockFilled(x, y, z + 1)) blockFlags |= FORWARD;
     if (IsBlockFilled(x, y, z - 1)) blockFlags |= BACKWARD;
 
-    Engine::Primitive cube = Engine::Cube(blockFlags);
-
-    if (!meshArray[x][y][z]) delete meshArray[x][y][z];
-    meshArray[x][y][z] = new Engine::Mesh(cube, glm::vec3(0.0625f * x, 0.0625f * y, 0.0625f * z), glm::vec3(0.f), glm::vec3(0.0625f));
+    if (blocks[x][y][z])
+        blocks[x][y][z]->UpdateMeshSides(blockFlags);
 }
 
 void ChunkRenderer::UpdateBlockAt(glm::uvec3 pos)

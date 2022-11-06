@@ -6,9 +6,11 @@
 #include <glad/glad.h>
 #include <SDL_image.h>
 
+#include "Core.hpp"
+
 namespace Engine
 {
-    class Texture
+    class ENGINE_API Texture
     {
     public:
         Texture(const char* fileName, GLenum type);

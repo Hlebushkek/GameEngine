@@ -31,7 +31,6 @@ namespace Engine
         this->InitOpenGLOptions();
         this->initMatrices();
         this->InitShaders();
-        this->InitTextures();
         this->InitMaterials();
         this->InitLights();
 
@@ -50,9 +49,6 @@ namespace Engine
 
         for (size_t i = 0; i < this->shaders.size(); i++)
             delete this->shaders[i];
-
-        for (size_t i = 0; i < this->textures.size(); i++)
-            delete this->textures[i];
         
         for (size_t i = 0; i < this->materials.size(); i++)
             delete this->materials[i];
@@ -124,15 +120,7 @@ namespace Engine
 
     void Application::InitShaders()
     {
-        this->shaders.push_back(new Shader("resources/vertex_shader.glsl", "resources/fragment_shader.glsl"));
-    }
-
-    void Application::InitTextures()
-    {
-        this->textures.push_back(new Texture("resources/Grass.png", GL_TEXTURE_2D));
-        this->textures.push_back(new Texture("resources/Grass_Specular.png", GL_TEXTURE_2D));
-        this->textures.push_back(new Texture("resources/WoodLog.png", GL_TEXTURE_2D));
-        this->textures.push_back(new Texture("resources/Pavern.png", GL_TEXTURE_2D));
+        this->shaders.push_back(new Shader("vertex_shader.glsl", "fragment_shader.glsl"));
     }
 
     void Application::InitMaterials()
@@ -176,7 +164,6 @@ namespace Engine
         this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
 
         //Update size and projectionMatrix
-
         SDL_GetWindowSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
         glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
 
@@ -221,6 +208,10 @@ namespace Engine
                 case SDLK_c:
                     this->camera.move(this->deltaTime, DOWN);
                     break;
+                case SDLK_e:
+                    windowGrab = !windowGrab;
+                    SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
+                    break;
                 default:
                     break;
                 }
@@ -231,7 +222,8 @@ namespace Engine
             }
             else if (event.type == SDL_MOUSEMOTION)
             {
-                this->camera.updateMouseMotionInput(deltaTime, this->mouseOffsetX * 50, this->mouseOffsetY * 50);
+                if (this->windowGrab)
+                    this->camera.updateMouseMotionInput(this->deltaTime, this->mouseOffsetX * 50, this->mouseOffsetY * 50);
             }
             else if (event.type == SDL_QUIT)
             {
@@ -270,10 +262,6 @@ namespace Engine
         //Use program
         this->shaders[SHADER_CORE_PROGRAM]->use();
 
-        //Activate texture
-        this->textures[GRASS]->bind(0);
-        this->textures[GRASS_SPECULAR]->bind(1);
-
         for (Layer* layer : layerStack)
         {
             layer->Update();
@@ -311,10 +299,6 @@ namespace Engine
 
         //Use program
         this->shaders[SHADER_CORE_PROGRAM]->use();
-
-        //Activate texture
-        this->textures[GRASS]->bind(0);
-        this->textures[GRASS_SPECULAR]->bind(1);
 
         //Render
         this->meshes[MESH_QUAD]->Render(this->shaders[SHADER_CORE_PROGRAM]);

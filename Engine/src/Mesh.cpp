@@ -1,5 +1,4 @@
 #include "../include/Mesh.hpp"
-#include <iostream>
 
 namespace Engine
 {
@@ -57,6 +56,10 @@ namespace Engine
     void Mesh::setPosition(const glm::vec3& position)
     {
         this->position = position;
+    }
+    glm::vec3 Mesh::getPosition()
+    {
+        return this->position;
     }
 
     void Mesh::setRotation(const glm::vec3& rotation)

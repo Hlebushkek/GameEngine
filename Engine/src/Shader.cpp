@@ -103,11 +103,16 @@ namespace Engine
     //Private methods
     std::string Shader::loadShaderSource(const char* fileName)
     {
+        char* presfix = "../../Sandbox/resources/";
+        char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
+        strcpy(full_path, presfix); 
+        strcat(full_path, fileName);
+
         std::string temp = "";
         std::string src = "";
 
         std::ifstream in_file;
-        in_file.open(fileName);
+        in_file.open(full_path);
 
         if (in_file.is_open())
         {

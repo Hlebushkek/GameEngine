@@ -19,7 +19,7 @@ SandBox::SandBox(const char* title, const int width, const int height)
         {
             for (int k = 0; k < 8; k++)
             {
-                backgroundLayer->AddRenderableObject(chunk->meshArray[i][j][k]);
+                backgroundLayer->AddRenderableObject((Engine::IRenderable*)chunk->blocks[i][j][k]);
             }
         }
     }

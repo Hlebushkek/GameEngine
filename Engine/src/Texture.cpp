@@ -33,8 +33,12 @@ namespace Engine
         {
             glDeleteTextures(1, &this->id);
         }
-        
-        SDL_Surface *textureImage = IMG_Load(fileName);
+        char* presfix = "../../Sandbox/resources/";
+        char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
+        strcpy(full_path, presfix); 
+        strcat(full_path, fileName);
+
+        SDL_Surface *textureImage = IMG_Load(full_path);
         std::cout << "After IMG_LOAD" << std::endl;
         if (textureImage)
         {
@@ -57,7 +61,7 @@ namespace Engine
 
             glTexImage2D(this->type, 0, imgFormat, this->width, this->height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
             glGenerateMipmap(this->type);
-        } else { std::cout << "ERROR::TEXTURE::LOAD_FROM_FILE::TEXTURE_LOADING_FAILED" << fileName << std::endl; }
+        } else { std::cout << "ERROR::TEXTURE::LOAD_FROM_FILE::TEXTURE_LOADING_FAILED" << full_path << std::endl; }
 
         glActiveTexture(0);
         glBindTexture(this->type, 0);

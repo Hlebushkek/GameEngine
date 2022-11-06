@@ -50,6 +50,7 @@ namespace Engine
 
         //Window
         SDL_Window* window;
+        bool windowGrab = false;
         
         const int WINDOW_WIDTH;
         const int WINDOW_HEIGHT;
@@ -76,9 +77,6 @@ namespace Engine
 
         //Shaders
         std::vector<Shader*> shaders;
-
-        //Textures
-        std::vector<Texture*> textures;
 
         //Materials
         std::vector<Material*> materials;
@@ -112,7 +110,6 @@ namespace Engine
         void InitOpenGLOptions();
         void initMatrices();
         void InitShaders();
-        void InitTextures();
         void InitMaterials();
         
         void InitLights();

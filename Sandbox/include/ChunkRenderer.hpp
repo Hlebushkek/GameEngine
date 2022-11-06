@@ -1,12 +1,17 @@
 #pragma once
+
+#include <vector>
+
 #include <Engine.hpp>
 #include "Enums.hpp"
+
+class Block;
 
 class ChunkRenderer
 {
 public:
 	ChunkRenderer(glm::uvec3 chunkSize);
-	virtual ~ChunkRenderer() = default;
+	virtual ~ChunkRenderer();
 
     bool IsBlockFilled(int x, int y, int z);
     bool IsBlockFilled(glm::uvec3 pos);
@@ -17,12 +22,13 @@ public:
     void UpdateBlockAt(int x, int y, int z);
     void UpdateBlockAt(glm::uvec3 pos);
 
-    Engine::Mesh**** meshArray;
+    Block**** blocks;
 private:
     const glm::uvec3 CHUNK_SIZE;
 
-    void InitCubeArray();
-    void FillChunk();
+    std::vector<Engine::Texture*> textures;
+
+    void InitBlocksArray();
 
     void UpdateNearbyBlocksFor(glm::uvec3 pos);
 };

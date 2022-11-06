@@ -4,7 +4,7 @@ namespace Engine
 {
     class Shader;
 
-    class IRenderable
+    class ENGINE_API IRenderable
     {
     public:
         virtual ~IRenderable() {}

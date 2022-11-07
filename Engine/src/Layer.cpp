@@ -13,9 +13,18 @@ namespace Engine
             object->Render(shader);
     }
 
+    void Layer::RenderUI(Shader* shader)
+    {
+        for (UIObject* object : this->uiObjects)
+            object->Render(shader);
+    }
+
     Layer::~Layer()
     {
         for (IRenderable* object : this->renderableObjects)
+            delete object;
+
+        for (UIObject* object : this->uiObjects)
             delete object;
     };
 }

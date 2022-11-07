@@ -1,9 +1,11 @@
 #pragma once
+
+#include "Core.hpp"
 #include "Primitive.hpp"
 
 namespace Engine
 {
-    class Rect : public Primitive
+    class ENGINE_API Rect : public Primitive
     {
     public:
         Rect();

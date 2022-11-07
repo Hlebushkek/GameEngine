@@ -5,4 +5,5 @@
 #include "include/Application.hpp"
 #include "include/Layer.hpp"
 #include "include/Cube.hpp"
+#include "include/Rect.hpp"
 //

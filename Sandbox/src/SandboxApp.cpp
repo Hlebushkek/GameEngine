@@ -4,7 +4,7 @@
 #include "../include/BackgroundLayer.hpp"
 #include "../include/InterfaceLayer.hpp"
 #include "../include/ChunkRenderer.hpp"
-
+#include "../include/Cursor.hpp"
 
 SandBox::SandBox(const char* title, const int width, const int height)
     : Engine::Application(title, width, height)
@@ -23,6 +23,8 @@ SandBox::SandBox(const char* title, const int width, const int height)
             }
         }
     }
+
+    backgroundLayer->AddUIObject((Engine::UIObject*)new Cursor());
 
     InterfaceLayer* interfaceLayer = new InterfaceLayer();
     PushLayer(interfaceLayer);

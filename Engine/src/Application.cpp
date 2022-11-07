@@ -121,6 +121,7 @@ namespace Engine
     void Application::InitShaders()
     {
         this->shaders.push_back(new Shader("vertex_shader.glsl", "fragment_shader.glsl"));
+        this->shaders.push_back(new Shader("ui_vertex_shader.glsl", "fragment_shader.glsl"));
     }
 
     void Application::InitMaterials()
@@ -141,6 +142,9 @@ namespace Engine
         core_program->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
 
         core_program->setVec3f(*this->lights[0], "lightPos0");
+
+        Shader* ui_program = this->shaders[SHADER_UI_PROGRAM];
+        ui_program->setVec3f(*this->lights[0], "lightPos0");
     }
 
     void Application::PushLayer(Layer* layer)
@@ -258,15 +262,16 @@ namespace Engine
         this->UpdateUniforms();
 
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-
-        //Use program
-        this->shaders[SHADER_CORE_PROGRAM]->use();
+        this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
 
         for (Layer* layer : layerStack)
         {
             layer->Update();
             layer->Render(this->shaders[SHADER_CORE_PROGRAM]);
         }
+
+        for (Layer* layer : layerStack)
+            layer->RenderUI(this->shaders[SHADER_UI_PROGRAM]);
 
         imGuiLayer->Begin();
         {

@@ -2,24 +2,13 @@
 
 namespace Engine
 {
-    Mesh::Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices,
-        glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+    Mesh::Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices)
     {
-        this->position = position;
-        this->rotation = rotation;
-        this->scale = scale;
-
         this->initVAO(vertexArray, nrOfVertices, indexArray, nrOfIndices);
-        this->updateModelMatrix();
     }
-    Mesh::Mesh(Primitive& primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+    Mesh::Mesh(Primitive& primitive)
     {
-        this->position = position;
-        this->rotation = rotation;
-        this->scale = scale;
-
         this->initVAO(primitive);
-        this->updateModelMatrix();
     }
 
     Mesh::~Mesh()
@@ -33,10 +22,7 @@ namespace Engine
 
     //PUBLIC
     void Mesh::Render(Shader* shader)
-    {
-        this->updateModelMatrix();
-        this->updateUniforms(shader);
-        
+    {     
         shader->use();
 
         glBindVertexArray(this->VAO);
@@ -51,47 +37,6 @@ namespace Engine
         glUseProgram(0);
         glActiveTexture(0);
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    void Mesh::setPosition(const glm::vec3& position)
-    {
-        this->position = position;
-    }
-    glm::vec3 Mesh::getPosition()
-    {
-        return this->position;
-    }
-
-    void Mesh::setRotation(const glm::vec3& rotation)
-    {
-        this->rotation = rotation;
-    }
-
-    void Mesh::setScale(const glm::vec3& scale)
-    {
-        this->scale = scale;
-    }
-
-    void Mesh::move(const glm::vec3& position)
-    {
-        this->position += position;
-    }
-
-    void Mesh::rotate(const glm::vec3& rotation)
-    {
-        this->rotation += rotation;
-        
-        if (this->rotation.x > 360)
-            this->rotation.x -= 360;
-        if (this->rotation.y > 360)
-            this->rotation.y -= 360;
-        if (this->rotation.z > 360)
-            this->rotation.z -= 360;
-    }
-
-    void Mesh::scaleUp(const glm::vec3& scale)
-    {
-        this->scale += scale;
     }
 
     //PRIVATE
@@ -162,20 +107,5 @@ namespace Engine
 
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
         glEnableVertexAttribArray(3);
-    }
-
-    void Mesh::updateUniforms(Shader* shader)
-    {
-        shader->setMat4fv(this->ModelMatrix, "ModelMatrix");
-    }
-
-    void Mesh::updateModelMatrix()
-    {
-        this->ModelMatrix = glm::mat4(1.0f);
-        this->ModelMatrix = glm::translate(this->ModelMatrix, this->position);
-        this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
-        this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
-        this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
-        this->ModelMatrix = glm::scale(this->ModelMatrix, this->scale);
     }
 }

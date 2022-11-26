@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-    UIObject::UIObject(const char* fileName, Primitive& primitive, glm::vec2 position, glm::vec2 rotation, glm::vec2 scale)
+    UIObject::UIObject(const char* fileName, Primitive& primitive, glm::vec2 position, glm::vec3 rotation, glm::vec2 scale)
     {
         this->position = position;
         this->rotation = rotation;
@@ -89,6 +89,7 @@ namespace Engine
         this->modelMatrix = glm::translate(this->modelMatrix, glm::vec3(this->position.x, this->position.y, 0));
         this->modelMatrix = glm::rotate(this->modelMatrix, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
         this->modelMatrix = glm::rotate(this->modelMatrix, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
+        this->modelMatrix = glm::rotate(this->modelMatrix, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
         this->modelMatrix = glm::scale(this->modelMatrix, glm::vec3(this->scale.x, this->scale.y, 1));
     }
     

@@ -30,10 +30,15 @@ namespace Engine
         void Run();
 
         static Application* Get() { return application; }
+        Camera* GetCamera() { return &camera; }
 
         SDL_Window* GetWindow() { return window; }
         int GetWidth() { return frameBufferWidth; }
         int GetHeight() { return frameBufferHeight; }
+
+        glm::vec3 GetMousePosition() { return glm::vec3(mouseX, mouseY, 0); }
+
+        glm::mat4 GetViewMatrix();
 
         SDL_GLContext glContext;
         ImGuiContext* imguiContext;

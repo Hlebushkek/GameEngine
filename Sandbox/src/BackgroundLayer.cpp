@@ -15,7 +15,7 @@ void BackgroundLayer::OnDetach()
 
 void BackgroundLayer::Update()
 {
-
+	Engine::RayCast::GetObjects();
 }
 
 void BackgroundLayer::OnImGuiRender() 

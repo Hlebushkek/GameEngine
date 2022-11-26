@@ -6,14 +6,13 @@
 #include "Texture.hpp"
 #include "Material.hpp"
 #include "Primitive.hpp"
-#include "IRenderable.hpp"
 
 namespace Engine
 {
-    class ENGINE_API UIObject : public IRenderable
+    class ENGINE_API UIObject
     {
     public:
-        UIObject(const char* fileName, Primitive& primitive, glm::vec2 position, glm::vec2 rotation, glm::vec2 scale);
+        UIObject(const char* fileName, Primitive& primitive, glm::vec2 position, glm::vec3 rotation, glm::vec2 scale);
         virtual ~UIObject();
 
         void Render(Shader* shader);
@@ -26,7 +25,7 @@ namespace Engine
         GLuint EBO;
 
         glm::vec2 position;
-        glm::vec2 rotation;
+        glm::vec3 rotation;
         glm::vec2 scale;
 
         glm::mat4 modelMatrix;

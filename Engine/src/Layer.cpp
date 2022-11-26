@@ -9,7 +9,7 @@ namespace Engine
 
     void Layer::Render(Shader* shader)
     {
-        for (IRenderable* object : this->renderableObjects)
+        for (GameObject* object : this->renderableObjects)
             object->Render(shader);
     }
 
@@ -21,7 +21,7 @@ namespace Engine
 
     Layer::~Layer()
     {
-        for (IRenderable* object : this->renderableObjects)
+        for (GameObject* object : this->renderableObjects)
             delete object;
 
         for (UIObject* object : this->uiObjects)

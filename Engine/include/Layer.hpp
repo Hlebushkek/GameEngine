@@ -6,6 +6,7 @@
 
 #include "Core.hpp"
 #include "Event.hpp"
+#include "GameObject.hpp"
 #include "UIObject.hpp"
 
 namespace Engine
@@ -28,12 +29,12 @@ namespace Engine
 
         inline const char* GetName() const { return layerName; }
 
-        inline void AddRenderableObject(IRenderable* object) { renderableObjects.emplace_back(object); }
+        inline void AddRenderableObject(GameObject* object) { renderableObjects.emplace_back(object); }
         inline void AddUIObject(UIObject* object) { uiObjects.emplace_back(object); }
 
     private:
         const char* layerName;
-        std::vector<IRenderable*> renderableObjects;
+        std::vector<GameObject*> renderableObjects;
         std::vector<UIObject*> uiObjects;
     };
 }

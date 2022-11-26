@@ -13,7 +13,7 @@ namespace Engine
         this->frameBufferWidth = this->WINDOW_WIDTH;
         this->frameBufferHeight = this->WINDOW_HEIGHT;
 
-        this->camPosition = glm::vec3 (0.f, 0.f, 1.f);
+        this->camPosition = glm::vec3(0.f, 0.f, 1.f);
         this->worldUp = glm::vec3(0.f, 1.f, 0.f);
         this->camFront = glm::vec3(0.f, 0.f, -1.f);
 
@@ -325,5 +325,10 @@ namespace Engine
         this->lastTime = this->curTime;
 
         // std::cout << "Delta Time: " << this->deltaTime << std::endl;
+    }
+    
+    glm::mat4 Application::GetViewMatrix()
+    {
+        return this->camera.getViewMatrix();
     }
 }

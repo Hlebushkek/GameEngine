@@ -80,7 +80,7 @@ namespace Engine
     const glm::mat4 Camera::getViewMatrix()
     {
         this->updateCameraVectors();
-
+        // std::cout << "Camera pos: " << glm::to_string(position) << std::endl;
         this->viewMatrix = glm::lookAt(this->position, this->position + this->front, this->up);
 
         return this->viewMatrix;

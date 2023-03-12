@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.hpp"
+#include <glm/glm.hpp>
 
 namespace Engine
 {
@@ -10,6 +11,6 @@ namespace Engine
         RayCast();
         ~RayCast() = default;
 
-        static bool GetObjects();
+        static glm::vec4 GetVectorForMouse();
     };
 }

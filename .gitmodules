@@ -1,12 +1,12 @@
-[submodule "Engine/vendors/glm"]
-	path = Engine/vendors/glm
+[submodule "vendors/glm"]
+	path = vendors/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "Engine/vendors/SDL"]
-	path = Engine/vendors/SDL
-	url = https://github.com/libsdl-org/SDL
-[submodule "Engine/vendors/SDL_image"]
-	path = Engine/vendors/SDL_image
-	url = https://github.com/libsdl-org/SDL_image
-[submodule "Engine/vendors/imgui"]
-	path = Engine/vendors/imgui
-	url = https://github.com/ocornut/imgui
+[submodule "vendors/imgui"]
+	path = vendors/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "vendors/SDL"]
+	path = vendors/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "vendors/SDL_image"]
+	path = vendors/SDL_image
+	url = https://github.com/libsdl-org/SDL_image.git

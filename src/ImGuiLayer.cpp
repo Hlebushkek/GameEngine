@@ -1,6 +1,6 @@
 #include <imgui.h>
 #define IMGUI_IMPL_OPENGL_ES2
-#include <backends/imgui_impl_sdl.h>
+#include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_opengl3.h>
 #include "../include/ImGuiLayer.hpp"
 #include "../include/Application.hpp"
@@ -28,26 +28,26 @@ namespace Engine
 
         ImGui::StyleColorsDark();
         
-        ImGui_ImplSDL2_InitForOpenGL(app->GetWindow(), app->glContext);
+        ImGui_ImplSDL3_InitForOpenGL(app->GetWindow(), app->glContext);
         ImGui_ImplOpenGL3_Init(glsl_version.c_str());
     }
 
     void ImGuiLayer::OnDetach()
     {
         ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
 		ImGui::DestroyContext(Application::Get()->imguiContext);
     }
 
     void ImGuiLayer::OnEvent(SDL_Event& event)
     {
-        ImGui_ImplSDL2_ProcessEvent(&event);
+        ImGui_ImplSDL3_ProcessEvent(&event);
     }
 
     void ImGuiLayer::Begin()
     {
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(Application::Get()->GetWindow());
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
     }
 

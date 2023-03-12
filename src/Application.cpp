@@ -73,7 +73,7 @@ namespace Engine
 
     void Application::InitWindow(const char* title, uint32_t windowFlags)
     {
-        window = SDL_CreateWindow(title, 400, 400, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
+        window = SDL_CreateWindow(title, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
         assert(this->window);
 
         SDL_GetWindowSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
@@ -185,13 +185,13 @@ namespace Engine
             
             this->UpdateMouseInput();
 
-            if (event.type == SDL_KEYDOWN)
+            if (event.type == SDL_EVENT_KEY_DOWN)
             {
                 switch (this->event.key.keysym.sym)
                 {
                 case SDLK_ESCAPE:
                     SDL_Event event;
-                    event.type = SDL_QUIT;
+                    event.type = SDL_EVENT_QUIT;
                     SDL_PushEvent(&event);
                     break;
                 case SDLK_w:
@@ -220,16 +220,16 @@ namespace Engine
                     break;
                 }
             }
-            else if (event.type == SDL_MOUSEWHEEL)
+            else if (event.type == SDL_EVENT_MOUSE_WHEEL)
             {
                 // this->updateWheelInput();
             }
-            else if (event.type == SDL_MOUSEMOTION)
+            else if (event.type == SDL_EVENT_MOUSE_WHEEL)
             {
                 if (this->windowGrab)
                     this->camera.updateMouseMotionInput(this->deltaTime, this->mouseOffsetX * 50, this->mouseOffsetY * 50);
             }
-            else if (event.type == SDL_QUIT)
+            else if (event.type == SDL_EVENT_QUIT)
             {
                 this->windowShouldClose = true;
             }

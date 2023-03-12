@@ -1,10 +1,10 @@
 #pragma once
 
 #include <iostream>
-#include <string>
+#include <cstring>
 
 #include <glad/glad.h>
-#include <SDL_image.h>
+#include <SDL3/SDL_image.h>
 
 #include "Core.hpp"
 

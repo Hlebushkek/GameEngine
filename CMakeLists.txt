@@ -26,7 +26,7 @@ target_link_libraries(${PROJECT_NAME} imgui)
 
 add_subdirectory(vendors/SDL)
 add_subdirectory(vendors/SDL_image)
-include_directories("vendors/SDL/include" "vendors/SDL/src" "vendors/SDL_image" "vendors/SDL_image/include")
+include_directories("vendors/SDL/include/" "vendors/SDL/src/" "vendors/SDL_image/" "vendors/SDL_image/include/")
 target_link_libraries(${PROJECT_NAME} -LC:/Users/hlebushkek/Documents/GameEngine/build/vendors/SDL -LC:/Users/hlebushkek/Documents/GameEngine/build/vendors/SDL_image SDL3 SDL3_image)
 
 include(CMakePrintHelpers)

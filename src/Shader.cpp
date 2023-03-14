@@ -103,8 +103,8 @@ namespace Engine
     //Private methods
     std::string Shader::loadShaderSource(const char* fileName)
     {
-        char* presfix = "../../Sandbox/resources/";
-        char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
+        char* presfix = "../resources/";
+        char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1);
         strcpy(full_path, presfix); 
         strcat(full_path, fileName);
 
@@ -120,7 +120,7 @@ namespace Engine
             {
                 src += temp + "\n";
             }
-        } else { std::cout << "ERROR::SHADER::SHADER::COULD_NOT_OPEN_FILE: " << fileName << std::endl; }
+        } else { std::cout << "ERROR::SHADER::SHADER::COULD_NOT_OPEN_FILE: " << full_path << " " << fileName << std::endl; }
 
         in_file.close();
 

@@ -33,7 +33,7 @@ namespace Engine
         {
             glDeleteTextures(1, &this->id);
         }
-        char* presfix = "../../Sandbox/resources/";
+        char* presfix = "../resources/";
         char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
         strcpy(full_path, presfix); 
         strcat(full_path, fileName);

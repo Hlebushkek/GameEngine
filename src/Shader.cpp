@@ -103,7 +103,7 @@ namespace Engine
     //Private methods
     std::string Shader::loadShaderSource(const char* fileName)
     {
-        char* presfix = "../../Sandbox/resources/";
+        char* presfix = "../resources/";
         char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
         strcpy(full_path, presfix); 
         strcat(full_path, fileName);

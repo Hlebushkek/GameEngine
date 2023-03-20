@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_image.h>
 #include "../include/Texture.hpp"
 
 namespace Engine

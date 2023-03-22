@@ -14,6 +14,7 @@
 #include "Camera.hpp"
 #include "LayerStack.hpp"
 #include "ImGuiLayer.hpp"
+#include "OBJLoader.hpp"
 
 namespace Engine
 {
@@ -116,6 +117,8 @@ namespace Engine
         void initMatrices();
         void InitShaders();
         void InitMaterials();
+        void InitOBJModels();
+
         
         void InitLights();
         void InitUniforms();

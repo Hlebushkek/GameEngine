@@ -32,6 +32,7 @@ namespace Engine
         this->initMatrices();
         this->InitShaders();
         this->InitMaterials();
+        this->InitOBJModels();
         this->InitLights();
 
         this->InitUniforms();
@@ -128,6 +129,12 @@ namespace Engine
     {
         this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
             0, 1));
+    }
+
+    void Application::InitOBJModels()
+    {
+        std::vector<Vertex> temp;
+        temp = loadOBJ("OBJFiles/Koltuk.obj");
     }
 
     void Application::InitLights()

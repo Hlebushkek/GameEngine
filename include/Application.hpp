@@ -118,7 +118,7 @@ namespace Engine
         void InitShaders();
         void InitMaterials();
         void InitOBJModels();
-
+        void InitModels();
         
         void InitLights();
         void InitUniforms();

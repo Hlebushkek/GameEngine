@@ -34,7 +34,7 @@ namespace Engine
         this->InitMaterials();
         this->InitOBJModels();
         this->InitLights();
-
+        this->InitModels();
         this->InitUniforms();
 
         application = this;
@@ -134,7 +134,15 @@ namespace Engine
     void Application::InitOBJModels()
     {
         std::vector<Vertex> temp;
-        temp = loadOBJ("OBJFiles/Koltuk.obj");
+        temp = OBJClass::loadOBJ("../resources/OBJFiles/guurl.obj");
+    }
+
+    void Application::InitModels()
+    {
+        std::vector<Mesh*>meshes;
+
+        std::vector<Vertex> mesh = OBJClass::loadOBJ("../resources/OBJFiles/guurl.obj");
+        meshes.push_back(new Mesh(mesh.data(), mesh.size(), 0, 0));
     }
 
     void Application::InitLights()

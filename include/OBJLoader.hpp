@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <iostream>
@@ -8,12 +7,12 @@
 #include <sstream>
 #include <algorithm>
 
-//Own Libs
-#include"Vertex.hpp"
+#include "Core.hpp"
+#include "Vertex.hpp"
 
 namespace Engine
 {
-class OBJClass
+class ENGINE_API OBJClass
 {
 public:
      static std::vector<Vertex> loadOBJ(const char* file_name);

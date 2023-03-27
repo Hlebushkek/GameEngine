@@ -32,9 +32,7 @@ namespace Engine
         this->initMatrices();
         this->InitShaders();
         this->InitMaterials();
-        this->InitOBJModels();
         this->InitLights();
-        this->InitModels();
         this->InitUniforms();
 
         application = this;
@@ -129,20 +127,6 @@ namespace Engine
     {
         this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
             0, 1));
-    }
-
-    void Application::InitOBJModels()
-    {
-        std::vector<Vertex> temp;
-        temp = OBJClass::loadOBJ("../resources/OBJFiles/guurl.obj");
-    }
-
-    void Application::InitModels()
-    {
-        std::vector<Mesh*>meshes;
-
-        std::vector<Vertex> mesh = OBJClass::loadOBJ("../resources/OBJFiles/guurl.obj");
-        meshes.push_back(new Mesh(mesh.data(), mesh.size(), 0, 0));
     }
 
     void Application::InitLights()

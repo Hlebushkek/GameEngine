@@ -8,4 +8,5 @@
 #include "include/Rect.hpp"
 #include "include/RayCast.hpp"
 #include "include/BoxCollider.hpp"
+#include "include/OBJLoader.hpp"
 //

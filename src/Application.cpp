@@ -33,7 +33,6 @@ namespace Engine
         this->InitShaders();
         this->InitMaterials();
         this->InitLights();
-
         this->InitUniforms();
 
         application = this;

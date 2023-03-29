@@ -75,7 +75,7 @@ namespace Engine
         window = SDL_CreateWindow(title, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
         assert(this->window);
 
-        SDL_GetWindowSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
+        SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
 
         this->glContext = SDL_GL_CreateContext(window);
         SDL_GL_MakeCurrent(window, glContext);
@@ -167,7 +167,7 @@ namespace Engine
         this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
 
         //Update size and projectionMatrix
-        SDL_GetWindowSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
+        SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
         glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
 
         this->projectionMatrix = glm::mat4(1.f);
@@ -223,7 +223,7 @@ namespace Engine
             {
                 // this->updateWheelInput();
             }
-            else if (event.type == SDL_EVENT_MOUSE_WHEEL)
+            else if (event.type == SDL_EVENT_MOUSE_MOTION)
             {
                 if (this->windowGrab)
                     this->camera.updateMouseMotionInput(this->deltaTime, this->mouseOffsetX * 50, this->mouseOffsetY * 50);

@@ -5,7 +5,13 @@ project(Engine)
 enable_language(C)
 enable_language(CXX)
 
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall")
+
+if(APPLE)
+    enable_language(OBJC)
+endif()
 
 add_definitions(-DENGINE_BUILD_DLL)
 
@@ -44,11 +50,15 @@ target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} imgui)
 target_link_libraries(${PROJECT_NAME} SDL3 SDL3_image)
 
+if(APPLE)
+    set(LIB_EXT dylib)
+    set(LIB_PREFIX lib)
+else()
+    set(LIB_EXT dll)
+    set(LIB_PREFIX)
+endif()
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL/SDL3.dll ${CMAKE_BINARY_DIR}/GameEngine/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL_image/SDL3_image.dll ${CMAKE_BINARY_DIR}/GameEngine/
-)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL/SDL3.dll ${CMAKE_BINARY_DIR}/GameEngine/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL_image/SDL3_image.dll ${CMAKE_BINARY_DIR}/GameEngine/
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL/${LIB_PREFIX}SDL3.${LIB_EXT} ${CMAKE_BINARY_DIR}/GameEngine/
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL_image/${LIB_PREFIX}SDL3_image.${LIB_EXT} ${CMAKE_BINARY_DIR}/GameEngine/
 )

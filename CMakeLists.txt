@@ -30,7 +30,6 @@ file(GLOB IMGUI_SOURCES "vendors/imgui/*.cpp" "vendors/imgui/*.h"
     "vendors/imgui/backends/imgui_impl_opengl3.cpp" "vendors/imgui/backends/imgui_impl_opengl3.h"
 )
 add_library(imgui STATIC ${IMGUI_SOURCES})
-#
 
 file(GLOB SOURCES "src/*.cpp" "include/*.hpp")
 link_directories(
@@ -44,3 +43,12 @@ target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} imgui)
 target_link_libraries(${PROJECT_NAME} SDL3 SDL3_image)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL/SDL3.dll ${CMAKE_BINARY_DIR}/GameEngine/
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL_image/SDL3_image.dll ${CMAKE_BINARY_DIR}/GameEngine/
+)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL/SDL3.dll ${CMAKE_BINARY_DIR}/GameEngine/
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL_image/SDL3_image.dll ${CMAKE_BINARY_DIR}/GameEngine/
+)

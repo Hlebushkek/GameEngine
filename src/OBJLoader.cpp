@@ -1,4 +1,4 @@
-#include "../include/OBJLoader.hpp"
+#include "OBJLoader.hpp"
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>

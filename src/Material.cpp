@@ -1,4 +1,4 @@
-#include "../include/Material.hpp"
+#include "Material.hpp"
 
 namespace Engine
 {

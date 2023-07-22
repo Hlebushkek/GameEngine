@@ -1,4 +1,4 @@
-#include "../include/Triangle.hpp"
+#include "Triangle.hpp"
 
 namespace Engine
 {

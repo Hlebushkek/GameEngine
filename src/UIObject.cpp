@@ -1,4 +1,4 @@
-#include "../include/UIObject.hpp"
+#include "UIObject.hpp"
 
 namespace Engine
 {

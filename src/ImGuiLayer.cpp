@@ -2,8 +2,8 @@
 #define IMGUI_IMPL_OPENGL_ES2
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_opengl3.h>
-#include "../include/ImGuiLayer.hpp"
-#include "../include/Application.hpp"
+#include "ImGuiLayer.hpp"
+#include "Application.hpp"
 
 namespace Engine
 {

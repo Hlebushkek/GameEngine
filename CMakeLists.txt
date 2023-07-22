@@ -15,7 +15,7 @@ add_subdirectory(vendors/SDL)
 add_subdirectory(vendors/SDL_image)
 
 include_directories(
-    /include
+    include/
     vendors/glad/include /vendors/glm
     vendors/imgui
 )

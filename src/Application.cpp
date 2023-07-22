@@ -1,6 +1,6 @@
-#include "../include/Application.hpp"
-#include "../include/Rect.hpp"
-#include "../include/Cube.hpp"
+#include "Application.hpp"
+#include "Rect.hpp"
+#include "Cube.hpp"
 
 namespace Engine
 {
@@ -61,13 +61,8 @@ namespace Engine
 
     void Application::Run()
     {
-        std::cout << "Applicaton satrt Running" << std::endl;
         while(!this->windowShouldClose)
-        {
             this->Update();
-            // this->Render();
-        }
-        std::cout << "Applicaton end Running" << std::endl;
     }
 
     void Application::InitWindow(const char* title, uint32_t windowFlags)

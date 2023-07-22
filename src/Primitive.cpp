@@ -1,4 +1,4 @@
-#include "../include/Primitive.hpp"
+#include "Primitive.hpp"
 
 namespace Engine
 {

@@ -1,4 +1,4 @@
-#include "../include/BoxCollider.hpp"
+#include "BoxCollider.hpp"
 
 namespace Engine
 {

@@ -1,4 +1,4 @@
-#include "../include/Cube.hpp"
+#include "Cube.hpp"
 
 namespace Engine
 {

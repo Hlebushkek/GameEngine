@@ -1,6 +1,6 @@
-#include "../include/RayCast.hpp"
-#include "../include/Application.hpp"
-#include "../include/Layer.hpp"
+#include "RayCast.hpp"
+#include "Application.hpp"
+#include "Layer.hpp"
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 

@@ -1,5 +1,5 @@
-#include "../include/Camera.hpp"
-#include "../include/Vertex.hpp"
+#include "Camera.hpp"
+#include "Vertex.hpp"
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 

@@ -47,7 +47,7 @@ namespace Engine
         this->nrOfIndices = nrOfIndices;
 
         //VAO
-        glCreateVertexArrays(1, &this->VAO);
+        glGenVertexArrays(1, &this->VAO);
         glBindVertexArray(this->VAO);
         //VBO
         glGenBuffers(1, &this->VBO);
@@ -75,6 +75,7 @@ namespace Engine
 
         glBindVertexArray(0);
     }
+
     void Mesh::initVAO(Primitive& primitive)
     {
         //Set variables

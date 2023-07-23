@@ -19,7 +19,6 @@ namespace Engine
         Mesh(Primitive& primitive);
         ~Mesh();
 
-        void update();
         void Render(Shader* shader);
 
     private:

@@ -29,6 +29,7 @@ namespace Engine
 
         this->InitGLAD();
         this->InitOpenGLOptions();
+        this->InitImGui();
         this->initMatrices();
         this->InitShaders();
         this->InitMaterials();
@@ -44,6 +45,10 @@ namespace Engine
 
     Application::~Application()
     {
+        ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
+		ImGui::DestroyContext(Application::Get()->imguiContext);
+        
         SDL_DestroyWindow(this->window);
 
         for (size_t i = 0; i < this->shaders.size(); i++)
@@ -69,9 +74,9 @@ namespace Engine
     {
         SDL_Init(SDL_INIT_EVERYTHING);
 
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
         window = SDL_CreateWindow(title, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
         assert(this->window);
@@ -106,6 +111,18 @@ namespace Engine
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    void Application::InitImGui()
+    {
+        IMGUI_CHECKVERSION();
+        imguiContext = ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+        ImGui::StyleColorsDark();
+        
+        ImGui_ImplSDL3_InitForOpenGL(window, glContext);
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     void Application::initMatrices()

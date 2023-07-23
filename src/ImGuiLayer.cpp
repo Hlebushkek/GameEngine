@@ -14,25 +14,12 @@ namespace Engine
 
     void ImGuiLayer::OnAttach()
     {
-        std::string glsl_version = "#version 410";
 
-        Application* app = Application::Get();
-        
-        IMGUI_CHECKVERSION();
-        app->imguiContext = ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-        ImGui::StyleColorsDark();
-        
-        ImGui_ImplSDL3_InitForOpenGL(app->GetWindow(), app->glContext);
-        ImGui_ImplOpenGL3_Init(glsl_version.c_str());
     }
 
     void ImGuiLayer::OnDetach()
     {
-        ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL3_Shutdown();
-		ImGui::DestroyContext(Application::Get()->imguiContext);
+        
     }
 
     void ImGuiLayer::OnEvent(SDL_Event& event)
@@ -49,20 +36,8 @@ namespace Engine
 
     void ImGuiLayer::End()
     {
-        // ImGuiIO& io = ImGui::GetIO();
-		// Application* app = Application::Get();
-		// io.DisplaySize = ImVec2((float)app->GetWidth(), (float)app->GetHeight());
-
-		// // Rendering
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		// // if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		// // {
-		// // 	SDL_GLContext* backup_current_context = Application::Get()->GetGLContext();
-		// // 	ImGui::UpdatePlatformWindows();
-		// // 	ImGui::RenderPlatformWindowsDefault();
-		// // }
     }
 
 }

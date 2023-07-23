@@ -34,6 +34,8 @@ namespace Engine
         Camera* GetCamera() { return &camera; }
 
         SDL_Window* GetWindow() { return window; }
+        SDL_GLContext& GetGLContext() { return glContext; }
+
         int GetWidth() { return frameBufferWidth; }
         int GetHeight() { return frameBufferHeight; }
 
@@ -114,6 +116,7 @@ namespace Engine
         void InitWindow(const char* title, uint32_t windowFlags);
         void InitGLAD();
         void InitOpenGLOptions();
+        void InitImGui();
         void initMatrices();
         void InitShaders();
         void InitMaterials();

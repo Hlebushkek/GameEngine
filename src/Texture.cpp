@@ -66,7 +66,6 @@ namespace Engine
 
         glActiveTexture(0);
         glBindTexture(this->type, 0);
-        // SDL_FreeSurface(textureImage);
-        // std::cout << "SDL_FreeSurface: " << fileName << std::endl;
+        SDL_DestroySurface(textureImage);
     }
 }

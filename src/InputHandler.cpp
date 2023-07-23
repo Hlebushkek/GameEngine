@@ -16,7 +16,6 @@ InputHandler::InputHandler()
 
 void InputHandler::HandleInput(SDL_Event& event)
 {
-    std::cout << "Event: "<< event.type << std::endl;
     SDL_Scancode code = event.key.keysym.scancode;
     switch (event.type)
     {

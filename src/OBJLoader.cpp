@@ -35,10 +35,7 @@ vector<Vertex> OBJClass::loadOBJ(const char* file_name)
      
      //File open erroe check
      if (!in_file.is_open())
-     {
-          cout << "Can't open file " << file_name << endl;
-          // throw "ERROR::OBKLOADER::Could not open a file.";
-     }
+          cout << "ERROR::OBJLOADER::Could not open a file: " << file_name << endl;
 
      //Read one line at a time
      while (getline(in_file, line))
@@ -113,27 +110,27 @@ vector<Vertex> OBJClass::loadOBJ(const char* file_name)
           {
                //Unknown case
           }
-
-          //Build final vertex array (mesh)
-          verticies.resize(vertex_positions_incdicies.size(), Vertex());
-           
-          //Load in all indicies 
-          for (size_t i = 0; i < verticies.size(); ++i )
-          {
-               verticies[i].position = vertex_positions[vertex_positions_incdicies[i] - 1];
-               verticies[i].texcoord = vertex_texcoords[vertex_texcoords_incdicies[i] - 1];
-               verticies[i].normal = vertex_normals[vertex_normals_incdicies[i] - 1];
-               verticies[i].color = vec4(0.f, 1.f, 0.f, 1.f);
-          }
-     
-          //DEBUG
-          // cout << "Nr of vertices:" << verticies.size() << "\n";
      }
+
+     //Build final vertex array (mesh)
+     verticies.resize(vertex_positions_incdicies.size(), Vertex());
+          
+     //Load in all indicies 
+     for (size_t i = 0; i < verticies.size(); ++i )
+     {
+          verticies[i].position = vertex_positions[vertex_positions_incdicies[i] - 1];
+          verticies[i].texcoord = vertex_texcoords[vertex_texcoords_incdicies[i] - 1];
+          verticies[i].normal = vertex_normals[vertex_normals_incdicies[i] - 1];
+          verticies[i].color = vec4(0.f, 1.f, 0.f, 1.f);
+     }
+
+     //DEBUG
+     // cout << "Nr of vertices:" << verticies.size() << "\n";
 
      cout << "vertices " << verticies.size() << endl;
      cout << "vertex_positions_incdicies " << vertex_positions_incdicies.size() << endl;
-     cout << "vertex_texcoords_incdicies" << vertex_texcoords_incdicies.size() << endl;
-     cout << "vertex_normals_incdicies" << vertex_normals_incdicies.size() << endl;
+     cout << "vertex_texcoords_incdicies " << vertex_texcoords_incdicies.size() << endl;
+     cout << "vertex_normals_incdicies " << vertex_normals_incdicies.size() << endl;
 
      cout << "vertex_positions " << vertex_positions.size() << endl;
      cout << "vertex_texcoords " << vertex_texcoords.size() << endl;

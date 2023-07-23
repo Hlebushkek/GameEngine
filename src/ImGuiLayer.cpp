@@ -14,11 +14,7 @@ namespace Engine
 
     void ImGuiLayer::OnAttach()
     {
-        std::string glsl_version = "";
-        glsl_version = "#version 130";
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+        std::string glsl_version = "#version 410";
 
         Application* app = Application::Get();
         

@@ -67,6 +67,12 @@ namespace Engine
 
     void Application::InitWindow(const char* title, uint32_t windowFlags)
     {
+        SDL_Init(SDL_INIT_EVERYTHING);
+
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
         window = SDL_CreateWindow(title, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
         assert(this->window);
 

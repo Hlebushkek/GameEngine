@@ -11,6 +11,7 @@
 #include <backends/imgui_impl_opengl3.h>
 #include "Core.hpp"
 #include "Mesh.hpp"
+#include "InputHandler.hpp"
 #include "Camera.hpp"
 #include "LayerStack.hpp"
 #include "ImGuiLayer.hpp"
@@ -39,12 +40,10 @@ namespace Engine
         int GetWidth() { return frameBufferWidth; }
         int GetHeight() { return frameBufferHeight; }
 
-        glm::vec3 GetMousePosition() { return glm::vec3(mouseX, mouseY, 0); }
+        bool IsWidnowGrabbed() { return windowGrab; }
 
         glm::mat4 GetViewMatrix();
 
-        SDL_GLContext glContext;
-        ImGuiContext* imguiContext;
     protected:
         //Layers
         ImGuiLayer* imGuiLayer;
@@ -56,10 +55,13 @@ namespace Engine
         //Singleton
         static Application* application;
 
+        InputHandler *inputHandler;
+
         //Window
         SDL_Window* window;
+        SDL_GLContext glContext;
         bool windowGrab = false;
-        
+
         const int WINDOW_WIDTH;
         const int WINDOW_HEIGHT;
         int frameBufferWidth;
@@ -67,7 +69,6 @@ namespace Engine
 
         //Layers
         LayerStack layerStack;
-        
 
         //Camera
         Camera camera;
@@ -95,28 +96,20 @@ namespace Engine
         //Lights
         std::vector<glm::vec3*> lights;
 
+        //Event
+        SDL_Event event;
+
+        bool windowShouldClose = false;
+
         //Delta time
         float deltaTime;
         float curTime;
         float lastTime;
 
-        //Event
-        bool windowShouldClose = false;
-        SDL_Event event;
-
-        //Mouse input
-        int lastMouseX;
-        int lastMouseY;
-        float mouseX;
-        float mouseY;
-        int mouseOffsetX;
-        int mouseOffsetY;
-
         //Inits
         void InitWindow(const char* title, uint32_t windowFlags);
         void InitGLAD();
         void InitOpenGLOptions();
-        void InitImGui();
         void initMatrices();
         void InitShaders();
         void InitMaterials();
@@ -126,11 +119,8 @@ namespace Engine
 
         void Update();
         void UpdateDeltaTime();
-        void UpdateInput();
-        void UpdateMouseInput();
+        void HandlEvents();
         void UpdateUniforms();
-
-        void Render();
     };
 
     Application* CreateApplication();

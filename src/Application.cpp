@@ -21,15 +21,10 @@ namespace Engine
         this->nearPlane = 0.01f;
         this->farPlane = 1000.f;
 
-        this->deltaTime = 0.f;
-        this->curTime = 0.f;
-        this->lastTime = 0.f;
-
         this->InitWindow(title, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
         this->InitGLAD();
         this->InitOpenGLOptions();
-        this->InitImGui();
         this->initMatrices();
         this->InitShaders();
         this->InitMaterials();
@@ -38,17 +33,15 @@ namespace Engine
 
         application = this;
 
+        inputHandler = InputHandler::Get();
+
         imGuiLayer = new ImGuiLayer();
 		PushOverlay(imGuiLayer);
         std::cout << "End App constructor" << std::endl;
     }
 
     Application::~Application()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL3_Shutdown();
-		ImGui::DestroyContext(Application::Get()->imguiContext);
-        
+    {        
         SDL_DestroyWindow(this->window);
 
         for (size_t i = 0; i < this->shaders.size(); i++)
@@ -113,18 +106,6 @@ namespace Engine
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    void Application::InitImGui()
-    {
-        IMGUI_CHECKVERSION();
-        imguiContext = ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-        ImGui::StyleColorsDark();
-        
-        ImGui_ImplSDL3_InitForOpenGL(window, glContext);
-        ImGui_ImplOpenGL3_Init("#version 330");
-    }
-
     void Application::initMatrices()
     {
         this->viewMatrix = glm::mat4(1.f);
@@ -176,110 +157,19 @@ namespace Engine
         layer->OnAttach();
     }
 
-    void Application::UpdateUniforms()
-    {
-        //Update view matrix (camera)
-        this->viewMatrix = this->camera.getViewMatrix();
-
-        this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->viewMatrix, "ViewMatrix");
-        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
-
-        //Update size and projectionMatrix
-        SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
-        glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
-
-        this->projectionMatrix = glm::mat4(1.f);
-        this->projectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
-            this->nearPlane, this->farPlane);
-        this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
-    }
-
-    void Application::UpdateInput()
-    {
-        while (SDL_PollEvent(&event))
-        {
-            this->imGuiLayer->OnEvent(event);
-            
-            this->UpdateMouseInput();
-
-            if (event.type == SDL_EVENT_KEY_DOWN)
-            {
-                switch (this->event.key.keysym.sym)
-                {
-                case SDLK_ESCAPE:
-                    SDL_Event event;
-                    event.type = SDL_EVENT_QUIT;
-                    SDL_PushEvent(&event);
-                    break;
-                case SDLK_w:
-                    this->camera.move(this->deltaTime, FORWARD);
-                    break;
-                case SDLK_s:
-                    this->camera.move(this->deltaTime, BACKWARD);
-                    break;
-                case SDLK_a:
-                    this->camera.move(this->deltaTime, LEFT);
-                    break;
-                case SDLK_d:
-                    this->camera.move(this->deltaTime, RIGHT);
-                    break;
-                case SDLK_SPACE:
-                    this->camera.move(this->deltaTime, UP);
-                    break;
-                case SDLK_c:
-                    this->camera.move(this->deltaTime, DOWN);
-                    break;
-                case SDLK_e:
-                    windowGrab = !windowGrab;
-                    SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
-                    break;
-                default:
-                    break;
-                }
-            }
-            else if (event.type == SDL_EVENT_MOUSE_WHEEL)
-            {
-                // this->updateWheelInput();
-            }
-            else if (event.type == SDL_EVENT_MOUSE_MOTION)
-            {
-                if (this->windowGrab)
-                    this->camera.updateMouseMotionInput(this->deltaTime, this->mouseOffsetX * 50, this->mouseOffsetY * 50);
-            }
-            else if (event.type == SDL_EVENT_QUIT)
-            {
-                this->windowShouldClose = true;
-            }
-        }
-    }
-
-    void Application::UpdateMouseInput()
-    {
-        SDL_GetMouseState(&mouseX, &mouseY);
-        //SDL_GetRelativeMouseState(&mouseOffsetX, &mouseOffsetY);
-
-        this->mouseOffsetX = this->event.motion.xrel;
-        this->mouseOffsetY = this->event.motion.yrel;
-        // std::cout << mouseOffsetX << " " << mouseOffsetY << std::endl;
-        this->lastMouseX = this->mouseX;
-        this->lastMouseY = this->mouseY;
-    }
-
     void Application::Update()
     {
         glClearColor(0.2, 0.2, 0.2, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Update deltaTime
         this->UpdateDeltaTime();
-
-        //Update input
-        this->UpdateInput();
-
+        this->HandlEvents();
         this->UpdateUniforms();
 
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
+
+        camera.Update(this->deltaTime);
 
         for (Layer* layer : layerStack)
         {
@@ -307,41 +197,60 @@ namespace Engine
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void Application::Render()
+    void Application::HandlEvents()
     {
-        //Clear
-        // glClearColor(0.2, 0.2, 0.2, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        this->inputHandler->Reset();
+        
+        while (SDL_PollEvent(&event))
+        {
+            this->imGuiLayer->OnEvent(event);
+            this->inputHandler->HandleInput(event);
 
-        //Upate uniforms
-        this->UpdateUniforms();
+            if (event.type == SDL_EVENT_QUIT)
+                this->windowShouldClose = true;
+        }
 
-        //Use material
-        this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+        if (inputHandler->GetKeyState(SDLK_ESCAPE) == KEY_DOWN)
+        {
+            SDL_Event event;
+            event.type = SDL_EVENT_QUIT;
+            SDL_PushEvent(&event);
+        }
 
-        //Use program
-        this->shaders[SHADER_CORE_PROGRAM]->use();
-
-        //Render
-        this->meshes[MESH_QUAD]->Render(this->shaders[SHADER_CORE_PROGRAM]);
-
-        glFlush();
-
-        SDL_GL_SwapWindow(window);
-
-        glBindVertexArray(0);
-        glUseProgram(0);
-        glActiveTexture(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if (inputHandler->GetKeyState(SDLK_e) == KEY_DOWN)
+        {
+            windowGrab = !windowGrab;
+            SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
+        }
     }
-    
+
     void Application::UpdateDeltaTime()
     {
-        this->curTime = static_cast<float>(SDL_GetTicks()) / 3600.f;
+        Uint64 ticks = SDL_GetTicks();
+        this->curTime = static_cast<float>(ticks) / 1000.;
         this->deltaTime = this->curTime - this->lastTime;
         this->lastTime = this->curTime;
 
+        // std::cout << "Ticks: " << ticks << std::endl;
         // std::cout << "Delta Time: " << this->deltaTime << std::endl;
+    }
+
+    void Application::UpdateUniforms()
+    {
+        //Update view matrix (camera)
+        this->viewMatrix = this->camera.getViewMatrix();
+
+        this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->viewMatrix, "ViewMatrix");
+        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
+
+        //Update size and projectionMatrix
+        SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
+        glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
+
+        this->projectionMatrix = glm::mat4(1.f);
+        this->projectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
+            this->nearPlane, this->farPlane);
+        this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
     }
     
     glm::mat4 Application::GetViewMatrix()

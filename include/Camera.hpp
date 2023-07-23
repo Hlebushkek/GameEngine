@@ -10,7 +10,9 @@ namespace Engine
     class Camera {
     public:
         Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp);
-        ~Camera(){}
+        ~Camera() {}
+
+        void Update(float dt);
 
         const glm::mat4 getViewMatrix();
 

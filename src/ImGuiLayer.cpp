@@ -7,6 +7,8 @@
 
 namespace Engine
 {
+    ImGuiContext *ImGuiLayer::imguiContext = nullptr;
+
     ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
@@ -14,12 +16,22 @@ namespace Engine
 
     void ImGuiLayer::OnAttach()
     {
+        IMGUI_CHECKVERSION();
+        imguiContext = ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+        ImGui::StyleColorsDark();
+        
+        auto app = Application::Get();
+        ImGui_ImplSDL3_InitForOpenGL(app->GetWindow(), app->GetGLContext());
+        ImGui_ImplOpenGL3_Init("#version 410");
     }
 
     void ImGuiLayer::OnDetach()
     {
-        
+        ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
+		ImGui::DestroyContext(imguiContext);
     }
 
     void ImGuiLayer::OnEvent(SDL_Event& event)

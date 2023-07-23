@@ -16,9 +16,11 @@ namespace Engine
 
 		void Begin();
 		void End();
-
+        
+        static ImGuiContext* GetImguiContext() { return imguiContext; }
+        
     private:
-
-
+        static ImGuiContext* imguiContext;
+    
     };
 }

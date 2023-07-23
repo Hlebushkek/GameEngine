@@ -1,7 +1,9 @@
-#include "Camera.hpp"
-#include "Vertex.hpp"
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
+#include "Application.hpp"
+#include "InputHandler.hpp"
+#include "Camera.hpp"
+#include "Vertex.hpp"
 
 namespace Engine
 {
@@ -9,8 +11,8 @@ namespace Engine
     {
         this->viewMatrix = glm::mat4(1.f);
 
-        this->movementSpeed = 100.f;
-        this->sensitivity = 50.f;
+        this->movementSpeed = 2.f;
+        this->sensitivity = 200.f;
 
         this->worldUp = worldUp;
         this->position = position;
@@ -22,6 +24,30 @@ namespace Engine
         this->roll = 0.f;
 
         this->updateCameraVectors();
+    }
+
+    void Camera::Update(float dt)
+    {
+        auto handler = InputHandler::Get();
+
+        if (handler->GetKeyState(SDLK_w) == KEY_DOWN || handler->GetKeyState(SDLK_w) == KEY_HOLD)
+            this->move(dt, FORWARD);
+        if (handler->GetKeyState(SDLK_s) == KEY_DOWN || handler->GetKeyState(SDLK_s) == KEY_HOLD)
+            this->move(dt, BACKWARD);
+        if (handler->GetKeyState(SDLK_a) == KEY_DOWN || handler->GetKeyState(SDLK_a) == KEY_HOLD)
+            this->move(dt, LEFT);
+        if (handler->GetKeyState(SDLK_d) == KEY_DOWN || handler->GetKeyState(SDLK_d) == KEY_HOLD)
+            this->move(dt, RIGHT);
+        if (handler->GetKeyState(SDLK_SPACE) == KEY_DOWN || handler->GetKeyState(SDLK_SPACE) == KEY_HOLD)
+            this->move(dt, UP);
+        if (handler->GetKeyState(SDLK_c) == KEY_DOWN || handler->GetKeyState(SDLK_DOWN) == KEY_HOLD)
+            this->move(dt, DOWN);
+
+        if (handler->MouseMoved() && Application::Get()->IsWidnowGrabbed())
+        {
+            glm::vec3 mouseOffset = handler->GetMouseDeltaOffset();
+            updateMouseMotionInput(dt, mouseOffset.x, mouseOffset.y);
+        }
     }
 
     void Camera::updateCameraVectors()
@@ -37,7 +63,6 @@ namespace Engine
 
     void Camera::move(const float& dt, const int direction)
     {
-        // std::cout << "move " << dt << std::endl;
         switch (direction)
         {
         case FORWARD:

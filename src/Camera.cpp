@@ -40,7 +40,7 @@ namespace Engine
             this->move(dt, RIGHT);
         if (handler->GetKeyState(SDLK_SPACE) == KEY_DOWN || handler->GetKeyState(SDLK_SPACE) == KEY_HOLD)
             this->move(dt, UP);
-        if (handler->GetKeyState(SDLK_c) == KEY_DOWN || handler->GetKeyState(SDLK_DOWN) == KEY_HOLD)
+        if (handler->GetKeyState(SDLK_c) == KEY_DOWN || handler->GetKeyState(SDLK_c) == KEY_HOLD)
             this->move(dt, DOWN);
 
         if (handler->MouseMoved() && Application::Get()->IsWidnowGrabbed())

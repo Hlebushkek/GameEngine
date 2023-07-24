@@ -7,7 +7,7 @@ namespace Engine
     Application* Application::application = nullptr;
 
     Application::Application(const char* title, const int width, const int height)
-        : WINDOW_WIDTH(width), WINDOW_HEIGHT(height), camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f))
+        : WINDOW_WIDTH(width), WINDOW_HEIGHT(height), camera(glm::vec3(0.f, 0.f, 1.f))
     {
         this->window = nullptr;
         this->frameBufferWidth = this->WINDOW_WIDTH;
@@ -169,7 +169,7 @@ namespace Engine
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
 
-        camera.Update(this->deltaTime);
+        camera.Update();
 
         for (Layer* layer : layerStack)
         {

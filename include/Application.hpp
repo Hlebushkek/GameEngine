@@ -36,6 +36,7 @@ namespace Engine
 
         SDL_Window* GetWindow() { return window; }
         SDL_GLContext& GetGLContext() { return glContext; }
+        float GetDeltaTime() { return deltaTime; } // Todo: move it to some kind of time class
 
         int GetWidth() { return frameBufferWidth; }
         int GetHeight() { return frameBufferHeight; }

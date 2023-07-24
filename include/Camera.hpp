@@ -1,18 +1,16 @@
 #pragma once
 
 #include <glad/glad.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "GameObject.hpp"
 
 namespace Engine
 {
-    class Camera {
+    class Camera : public GameObject {
     public:
-        Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp);
+        Camera(glm::vec3 position, glm::vec3 rotation = glm::vec3(0.f));
         ~Camera() {}
-
-        void Update(float dt);
 
         const glm::mat4 getViewMatrix();
 
@@ -21,23 +19,14 @@ namespace Engine
         void move(const float& dt, const int direction);
         void updateMouseMotionInput(const float& dt, const int& offsetX, const int& offsetY);
 
+        void Update() override;
+
     private:
         glm::mat4 viewMatrix;
 
-        glm::vec3 worldUp;
-        glm::vec3 position;
-        glm::vec3 front;
-        glm::vec3 right;
-        glm::vec3 up;
-
-        GLfloat pitch;
-        GLfloat yaw;
-        GLfloat roll;
-
         GLfloat movementSpeed;
         GLfloat sensitivity;
-        
-        void updateCameraVectors();
+
     };
     
 }

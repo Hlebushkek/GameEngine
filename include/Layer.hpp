@@ -19,7 +19,7 @@ namespace Engine
 
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void Update() {}
+        virtual void Update() { for (auto& object : renderableObjects) object->Update(); }
 
         virtual void Render(Shader* shader);
         virtual void RenderUI(Shader* shader);

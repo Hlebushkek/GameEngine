@@ -83,7 +83,7 @@ namespace Engine
         this->nrOfIndices = primitive.getNumberOfIndices();
         
         //VAO
-        glCreateVertexArrays(1, &this->VAO);
+        glGenVertexArrays(1, &this->VAO);
         glBindVertexArray(this->VAO);
         //VBO
         glGenBuffers(1, &this->VBO);

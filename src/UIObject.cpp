@@ -9,8 +9,8 @@ namespace Engine
         this->scale = scale;
 
         this->InitVAO(primitive);
-
-        this->texture = new Texture(fileName, GL_TEXTURE_2D);
+        
+        this->texture = Texture::LoadTexture(fileName, GL_TEXTURE_2D);
     }
 
     UIObject::~UIObject()

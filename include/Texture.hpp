@@ -1,7 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <cstring>
+#include <filesystem>
+#include <unordered_map>
 
 #include <glad/glad.h>
 
@@ -12,7 +13,6 @@ namespace Engine
     class ENGINE_API Texture
     {
     public:
-        Texture(const char* fileName, GLenum type);
         ~Texture();
 
         inline GLuint getID() const { return this->id; }
@@ -20,13 +20,17 @@ namespace Engine
         void bind(const GLint texture_unit);
         void unbind(GLenum type);
 
-        void loadTexture(const char* fileName);
+        static Texture *LoadTexture(const std::string &fileName, GLenum type);
 
     private:
+        Texture(GLint id, GLenum type, int width, int height);
+        static std::unordered_map<std::filesystem::path, Texture*> texturesMap;
+
         GLuint id;
+        GLenum type;
+
         int width;
         int height;
-        GLenum type;
 
     };
 }

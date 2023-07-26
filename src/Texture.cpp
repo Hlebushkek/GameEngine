@@ -4,17 +4,10 @@
 
 namespace Engine
 {
-    Texture::Texture(const char* fileName, GLenum type)
-    {
-        this->type = type;
+    std::unordered_map<std::filesystem::path, Texture*> Texture::texturesMap = {};
 
-        loadTexture(fileName);
-    }
-
-    Texture::~Texture()
-    {
-        glDeleteTextures(1, &this->id);
-    }
+    Texture::Texture(GLint id, GLenum type, int width, int height) : id(id), type(type), width(width), height(height) {}
+    Texture::~Texture() { glDeleteTextures(1, &this->id); }
 
     void Texture::bind(const GLint texture_unit)
     {
@@ -28,44 +21,45 @@ namespace Engine
         glBindTexture(this->type, 0);
     }
 
-    void Texture::loadTexture(const char* fileName)
+    Texture *Texture::LoadTexture(const std::string &fileName, GLenum type)
     {
-        if (this->id)
-        {
-            glDeleteTextures(1, &this->id);
-        }
-        char* presfix = "../resources/";
-        char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
-        strcpy(full_path, presfix); 
-        strcat(full_path, fileName);
+        if (texturesMap.find(fileName) != texturesMap.end())
+            return texturesMap[fileName];
+        
+        Texture *texture;
+        std::string full_path = "../resources/" + fileName;
 
-        SDL_Surface *textureImage = IMG_Load(full_path);
-        std::cout << "After IMG_LOAD" << std::endl;
+        SDL_Surface *textureImage = IMG_Load(full_path.c_str());
         if (textureImage)
         {
-            this->width = textureImage->w;
-            this->height = textureImage->h;
-
             GLenum imgFormat = GL_RGB;
             if (textureImage->format->Amask != 0)
             {
                 imgFormat = GL_RGBA;
             }
 
-            glGenTextures(1, &this->id);
-            glBindTexture(this->type, this->id);
+            int width = textureImage->w;
+            int height = textureImage->h;
+            GLuint id;
+            glGenTextures(1, &id);
+            glBindTexture(type, id);
 
-            glTexParameteri(this->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(this->type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(this->type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-            glTexParameteri(this->type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+            glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            glTexImage2D(this->type, 0, imgFormat, this->width, this->height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
-            glGenerateMipmap(this->type);
+            glTexImage2D(type, 0, imgFormat, width, height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
+            glGenerateMipmap(type);
+
+            texture = new Texture(id, type, width, height);
+            texturesMap.insert(std::make_pair(fileName, texture));
         } else { std::cout << "ERROR::TEXTURE::LOAD_FROM_FILE::TEXTURE_LOADING_FAILED" << full_path << std::endl; }
 
         glActiveTexture(0);
-        glBindTexture(this->type, 0);
+        glBindTexture(type, 0);
         SDL_DestroySurface(textureImage);
+
+        return texture;
     }
 }

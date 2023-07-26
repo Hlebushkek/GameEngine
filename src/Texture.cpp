@@ -30,31 +30,30 @@ namespace Engine
         std::string full_path = "../resources/" + fileName;
 
         SDL_Surface *textureImage = IMG_Load(full_path.c_str());
-        if (textureImage)
+        if (!textureImage)
         {
-            GLenum imgFormat = GL_RGB;
-            if (textureImage->format->Amask != 0)
-            {
-                imgFormat = GL_RGBA;
-            }
+            std::cout << "ERROR::TEXTURE::LOAD_FROM_FILE::TEXTURE_LOADING_FAILED " << full_path << std::endl;
+            return nullptr;
+        }
 
-            int width = textureImage->w;
-            int height = textureImage->h;
-            GLuint id;
-            glGenTextures(1, &id);
-            glBindTexture(type, id);
+        int width = textureImage->w;
+        int height = textureImage->h;   
 
-            glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-            glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GLuint id;
+        glGenTextures(1, &id);
+        glBindTexture(type, id);
 
-            glTexImage2D(type, 0, imgFormat, width, height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
-            glGenerateMipmap(type);
+        glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            texture = new Texture(id, type, width, height);
-            texturesMap.insert(std::make_pair(fileName, texture));
-        } else { std::cout << "ERROR::TEXTURE::LOAD_FROM_FILE::TEXTURE_LOADING_FAILED" << full_path << std::endl; }
+        GLenum imgFormat = textureImage->format->Amask == 0 ? GL_RGB : GL_RGBA;  
+        glTexImage2D(type, 0, imgFormat, width, height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
+        glGenerateMipmap(type);
+
+        texture = new Texture(id, type, width, height);
+        texturesMap.insert(std::make_pair(fileName, texture));
 
         glActiveTexture(0);
         glBindTexture(type, 0);

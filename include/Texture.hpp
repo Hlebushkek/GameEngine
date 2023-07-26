@@ -1,12 +1,22 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 #include <filesystem>
 #include <unordered_map>
 
 #include <glad/glad.h>
 
 #include "Core.hpp"
+
+namespace std {
+    template <>
+    struct hash<std::filesystem::path> {
+        size_t operator()(const std::filesystem::path& p) const {
+            return std::hash<std::string>{}(p.string());
+        }
+    };
+}
 
 namespace Engine
 {

@@ -9,6 +9,7 @@
 
 #include "Core.hpp"
 
+#ifdef __APPLE__
 namespace std {
     template <>
     struct hash<std::filesystem::path> {
@@ -17,6 +18,7 @@ namespace std {
         }
     };
 }
+#endif
 
 namespace Engine
 {

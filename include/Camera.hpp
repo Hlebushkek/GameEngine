@@ -14,9 +14,7 @@ namespace Engine
 
         const glm::mat4 getViewMatrix();
 
-        const glm::vec3 getPosition() const;
-
-        void move(const float& dt, const int direction);
+        void Move(const float& dt, const int direction);
         void updateMouseMotionInput(const float& dt, const int& offsetX, const int& offsetY);
 
         void Update() override;

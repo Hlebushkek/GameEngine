@@ -118,6 +118,8 @@ namespace Engine
         void InitLights();
         void InitUniforms();
 
+        void CastRay();
+
         void Update();
         void UpdateDeltaTime();
         void HandlEvents();

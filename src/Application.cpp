@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "Ray.hpp"
 #include "Rect.hpp"
 #include "Cube.hpp"
 
@@ -145,6 +146,32 @@ namespace Engine
         ui_program->setVec3f(*this->lights[0], "lightPos0");
     }
 
+    void Application::CastRay()
+    {
+        glm::vec3 sdlMousePos = inputHandler->GetMousePosition();
+
+        float ndcX = (2.0f * sdlMousePos.x) / frameBufferWidth - 1.0f;
+        float ndcY = 1.0f - (2.0f * sdlMousePos.y) / frameBufferHeight;
+
+        glm::mat4 viewMatrix = GetViewMatrix();
+
+        glm::mat4 inverseViewMatrix = glm::inverse(viewMatrix);
+        glm::mat4 inverseProjectionMatrix = glm::inverse(projectionMatrix);
+
+        glm::vec4 rayStartNDC(ndcX, ndcY, -1.0, 1.0);
+        glm::vec4 rayEndNDC(ndcX, ndcY, 0.0, 1.0);
+
+        glm::vec4 rayStartWorld = inverseProjectionMatrix * rayStartNDC;
+        glm::vec4 rayEndWorld = inverseProjectionMatrix * rayEndNDC;
+
+        rayStartWorld /= rayStartWorld.w;
+        rayEndWorld /= rayEndWorld.w;
+
+        Ray mouseRay { glm::vec3(rayStartWorld), glm::vec3(rayEndWorld) };
+        for (auto layer : layerStack)
+            layer->CheckCollisions(mouseRay);
+    }
+
     void Application::PushLayer(Layer* layer)
     {
         layerStack.PushLayer(layer);
@@ -165,6 +192,7 @@ namespace Engine
         this->UpdateDeltaTime();
         this->HandlEvents();
         this->UpdateUniforms();
+        this->CastRay();
 
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
@@ -241,7 +269,7 @@ namespace Engine
         this->viewMatrix = this->camera.getViewMatrix();
 
         this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->viewMatrix, "ViewMatrix");
-        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
+        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.transform().GetPosition(), "cameraPos");
 
         //Update size and projectionMatrix
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);

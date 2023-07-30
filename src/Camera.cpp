@@ -35,6 +35,11 @@ namespace Engine
         if (handler->GetKeyState(SDLK_c) == KEY_DOWN || handler->GetKeyState(SDLK_c) == KEY_HOLD)
             this->Move(dt, DOWN);
 
+        if (handler->GetKeyState(SDLK_LSHIFT) == KEY_DOWN || handler->GetKeyState(SDLK_LSHIFT) == KEY_HOLD)
+            this->movementSpeed = 0.8f;
+        else 
+            this->movementSpeed = 2.f;
+
         if (handler->MouseMoved() && Application::Get()->IsWidnowGrabbed())
         {
             glm::vec3 mouseOffset = handler->GetMouseDeltaOffset();

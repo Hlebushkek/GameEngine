@@ -3,7 +3,6 @@
 #include <iostream>
 #include <array>
 #include <vector>
-
 #include "Core.hpp"
 #include "Vertex.hpp"
 #include "Shader.hpp"
@@ -13,6 +12,7 @@
 #include "Collider.hpp"
 #include "Ray.hpp"
 #include "Transform.hpp"
+#include "Intersection.hpp"
 
 namespace Engine
 {
@@ -21,9 +21,10 @@ class ENGINE_API GameObject
 {
 public:
     GameObject(glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
+    virtual ~GameObject() {}
 
     Transform& transform() { return _transform; }
-    bool CollidesWith(const Ray& ray);
+    std::optional<Intersection> CollidesWith(const Ray& ray);
 
     //Virtual
     virtual void Render(Shader* shader);

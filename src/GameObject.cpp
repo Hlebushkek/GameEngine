@@ -4,7 +4,7 @@ namespace Engine
 {
 
 GameObject::GameObject(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-    : _transform(position, rotation, scale) {}
+    : _transform(position, rotation, scale), collider(nullptr) {}
 
 void GameObject::Render(Shader* shader)
 {
@@ -14,10 +14,18 @@ void GameObject::Render(Shader* shader)
         mesh->Render(shader);
 }
 
-bool GameObject::CollidesWith(const Ray &ray)
+std::optional<Intersection> GameObject::CollidesWith(const Ray &ray)
 {
-    if (!collider) return false;
-    return collider->CollidesWith(ray, _transform);
+    if (!collider) return std::nullopt;
+
+    auto result = collider->CollidesWith(ray, _transform);
+    if (result.has_value())
+    {
+        OnRayIntersection(ray);
+        return std::optional<Intersection>{{result.value(), this}};
+    }
+
+    return std::nullopt;
 }
 
 void GameObject::UpdateUniforms(Shader* shader)

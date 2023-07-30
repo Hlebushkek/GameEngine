@@ -63,6 +63,8 @@ namespace Engine
         SDL_GLContext glContext;
         bool windowGrab = false;
 
+        bool drawOnlyWireframes = false;
+
         const int WINDOW_WIDTH;
         const int WINDOW_HEIGHT;
         int frameBufferWidth;

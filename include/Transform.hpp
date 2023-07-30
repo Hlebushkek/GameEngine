@@ -10,9 +10,13 @@ namespace Engine
 
 class Transform {
 public:
-    Transform(const glm::vec3& position = glm::vec3(0.f), const glm::vec3& rotation = glm::vec3(0.f), const glm::vec3& scale = glm::vec3(0.f))
-        : position(position), rotation(rotation), scale(scale), front(WORLD_FRONT), up(WORLD_UP), right(glm::cross(front, up))
+    Transform(glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f))
+        : position(position), rotation(rotation), scale(scale)
     {
+        front = WORLD_FRONT;
+        up = WORLD_UP;
+        right = glm::cross(front, up);
+
         UpdateDirections();
     }
 

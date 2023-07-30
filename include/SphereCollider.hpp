@@ -11,7 +11,7 @@ namespace Engine
         SphereCollider(float radius, glm::vec3 positionOffset = glm::vec3(0));
         virtual ~SphereCollider() = default;
 
-        virtual bool CollidesWith(const Ray& ray, const Transform& transform) override;
+        virtual std::optional<glm::vec3> CollidesWith(const Ray& ray, const Transform& transform) override;
         
     private:
         float radius;

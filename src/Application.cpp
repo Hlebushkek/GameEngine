@@ -1,4 +1,6 @@
+#include <glm/gtx/string_cast.hpp>
 #include "Application.hpp"
+#include "Gizmos.hpp"
 #include "Ray.hpp"
 #include "Rect.hpp"
 #include "Cube.hpp"
@@ -79,12 +81,8 @@ namespace Engine
 
         this->glContext = SDL_GL_CreateContext(window);
         SDL_GL_MakeCurrent(window, glContext);
-        // SDL_ShowCursor(SDL_DISABLE);
-        // SDL_SetRelativeMouseMode(SDL_TRUE);
 
         SDL_PumpEvents();
-        // SDL_GetMouseState(&lastMouseX, &lastMouseY);
-        // SDL_GetMouseState(&mouseX, &mouseY);
     }
 
     void Application::InitGLAD()
@@ -125,13 +123,13 @@ namespace Engine
 
     void Application::InitMaterials()
     {
-        this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
+        this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(10.f), glm::vec3(1.f),
             0, 1));
     }
 
     void Application::InitLights()
     {
-        this->lights.push_back(new glm::vec3(0.f, 0.f, 1.0f));
+        this->lights.push_back(new glm::vec3(0.5f, 0.f, 0.f));
     }
 
     void Application::InitUniforms()
@@ -154,22 +152,30 @@ namespace Engine
         float ndcY = 1.0f - (2.0f * sdlMousePos.y) / frameBufferHeight;
 
         glm::mat4 viewMatrix = GetViewMatrix();
-
-        glm::mat4 inverseViewMatrix = glm::inverse(viewMatrix);
-        glm::mat4 inverseProjectionMatrix = glm::inverse(projectionMatrix);
+        glm::mat4 viewProjectionInverse = glm::inverse(projectionMatrix * viewMatrix);
 
         glm::vec4 rayStartNDC(ndcX, ndcY, -1.0, 1.0);
         glm::vec4 rayEndNDC(ndcX, ndcY, 0.0, 1.0);
 
-        glm::vec4 rayStartWorld = inverseProjectionMatrix * rayStartNDC;
-        glm::vec4 rayEndWorld = inverseProjectionMatrix * rayEndNDC;
+        glm::vec4 rayStartWorld = viewProjectionInverse * rayStartNDC;
+        glm::vec4 rayEndWorld = viewProjectionInverse * rayEndNDC;
 
         rayStartWorld /= rayStartWorld.w;
         rayEndWorld /= rayEndWorld.w;
 
         Ray mouseRay { glm::vec3(rayStartWorld), glm::vec3(rayEndWorld) };
         for (auto layer : layerStack)
-            layer->CheckCollisions(mouseRay);
+        {
+            auto intersection = layer->CheckCollisions(mouseRay);
+            if (intersection.has_value())
+            {
+                std::cout << "Ray intersected with game object: " << intersection.value().object << std::endl;
+                //Draw ray gizmo
+                std::cout << "Ray: " << glm::to_string(mouseRay.origin) << ", direction: " << glm::to_string(mouseRay.direction()) << std::endl;
+                // Gizmos::DrawLine(mouseRay.origin, mouseRay.direction());
+                //Draw collider gizmo
+            }
+        }
     }
 
     void Application::PushLayer(Layer* layer)
@@ -192,10 +198,11 @@ namespace Engine
         this->UpdateDeltaTime();
         this->HandlEvents();
         this->UpdateUniforms();
-        this->CastRay();
 
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
+
+        this->CastRay();
 
         camera.Update();
 
@@ -249,6 +256,12 @@ namespace Engine
         {
             windowGrab = !windowGrab;
             SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
+        }
+
+        if (inputHandler->GetKeyState(SDLK_y) == KEY_DOWN)
+        {
+            drawOnlyWireframes = !drawOnlyWireframes;
+            glPolygonMode(GL_FRONT_AND_BACK, drawOnlyWireframes ? GL_LINE : GL_FILL);
         }
     }
 

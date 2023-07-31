@@ -1,18 +1,23 @@
 #include <glm/glm.hpp>
 #include "SphereCollider.hpp"
+#include "Sphere.hpp"
 
 namespace Engine
 {
 
 SphereCollider::SphereCollider(float radius, glm::vec3 positionOffset)
-    : radius(radius), positionOffset(positionOffset) {}
+    : radius(radius), positionOffset(positionOffset)
+{
+    Engine::Primitive sphere = Engine::Sphere(radius);
+    this->mesh = new Mesh(sphere);
+}
 
 std::optional<glm::vec3> SphereCollider::CollidesWith(const Ray &ray, const Transform& transform)
 {
-    glm::vec3 oc = ray.origin - transform.GetPosition();
+    glm::vec3 oc = ray.origin - transform.GetPosition() - positionOffset;
     float a = glm::dot(ray.direction(), ray.direction());
     float b = 2.0f * glm::dot(oc, ray.direction());
-    float c = glm::dot(oc, oc) - radius * radius;
+    float c = glm::dot(oc, oc) - radius * radius * transform.GetScale().x * transform.GetScale().x;
     float discriminant = b * b - 4 * a * c;
 
     if (discriminant < 0)

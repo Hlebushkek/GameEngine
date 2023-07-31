@@ -12,6 +12,9 @@ void GameObject::Render(Shader* shader)
 
     for (Mesh* mesh : this->meshes)
         mesh->Render(shader);
+
+    if (collider)
+        collider->Render(shader);
 }
 
 std::optional<Intersection> GameObject::CollidesWith(const Ray &ray)

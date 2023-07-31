@@ -1,6 +1,5 @@
 #include <glm/gtx/string_cast.hpp>
 #include "Application.hpp"
-#include "Gizmos.hpp"
 #include "Ray.hpp"
 #include "Rect.hpp"
 #include "Cube.hpp"

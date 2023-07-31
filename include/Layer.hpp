@@ -20,6 +20,17 @@ namespace Engine
         virtual void OnAttach() {}
         virtual void OnDetach() {}
         virtual void Update() { for (auto& object : renderableObjects) object->Update(); }
+        virtual std::optional<Intersection> CheckCollisions(const Ray& ray)
+        {
+            for (auto& object : renderableObjects)
+            {
+                auto result = object->CollidesWith(ray);
+                if (result.has_value())
+                    return result;
+            }
+
+            return std::nullopt;
+        }
 
         virtual void Render(Shader* shader);
         virtual void RenderUI(Shader* shader);

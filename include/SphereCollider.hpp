@@ -5,15 +5,16 @@
 
 namespace Engine
 {
-    class ENGINE_API BoxCollider : public Collider
+    class ENGINE_API SphereCollider : public Collider
     {
     public:
-        BoxCollider(glm::vec3 positionOffset = glm::vec3(0));
-        virtual ~BoxCollider() = default;
+        SphereCollider(float radius, glm::vec3 positionOffset = glm::vec3(0));
+        virtual ~SphereCollider() = default;
 
         virtual std::optional<glm::vec3> CollidesWith(const Ray& ray, const Transform& transform) override;
 
     private:
+        float radius;
         glm::vec3 positionOffset;
 
     };

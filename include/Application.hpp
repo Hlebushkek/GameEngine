@@ -64,8 +64,10 @@ namespace Engine
         SDL_GLContext glContext;
         bool windowGrab = false;
 
-        const int WINDOW_WIDTH;
-        const int WINDOW_HEIGHT;
+        bool drawOnlyWireframes = false;
+
+        int windowWidth;
+        int windowHeight;
         int frameBufferWidth;
         int frameBufferHeight;
 
@@ -118,6 +120,8 @@ namespace Engine
         
         void InitLights();
         void InitUniforms();
+
+        void CastRay();
 
         void Update();
         void UpdateDeltaTime();

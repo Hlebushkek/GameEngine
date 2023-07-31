@@ -1,4 +1,7 @@
+#include <glm/gtx/string_cast.hpp>
 #include "Application.hpp"
+#include "Gizmos.hpp"
+#include "Ray.hpp"
 #include "Rect.hpp"
 #include "Cube.hpp"
 
@@ -7,11 +10,11 @@ namespace Engine
     Application* Application::application = nullptr;
 
     Application::Application(const char* title, const int width, const int height)
-        : WINDOW_WIDTH(width), WINDOW_HEIGHT(height), camera(glm::vec3(0.f, 0.f, 1.f))
+        : windowWidth(width), windowHeight(height), camera(glm::vec3(0.f, 0.f, 1.f))
     {
         this->window = nullptr;
-        this->frameBufferWidth = this->WINDOW_WIDTH;
-        this->frameBufferHeight = this->WINDOW_HEIGHT;
+        this->frameBufferWidth = this->windowWidth;
+        this->frameBufferHeight = this->windowHeight;
 
         this->camPosition = glm::vec3(0.f, 0.f, 1.f);
         this->worldUp = glm::vec3(0.f, 1.f, 0.f);
@@ -71,19 +74,16 @@ namespace Engine
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-        window = SDL_CreateWindow(title, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
+        window = SDL_CreateWindow(title, windowWidth, windowHeight, windowFlags);
         assert(this->window);
 
+        SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
 
         this->glContext = SDL_GL_CreateContext(window);
         SDL_GL_MakeCurrent(window, glContext);
-        // SDL_ShowCursor(SDL_DISABLE);
-        // SDL_SetRelativeMouseMode(SDL_TRUE);
 
         SDL_PumpEvents();
-        // SDL_GetMouseState(&lastMouseX, &lastMouseY);
-        // SDL_GetMouseState(&mouseX, &mouseY);
     }
 
     void Application::InitGLAD()
@@ -124,13 +124,13 @@ namespace Engine
 
     void Application::InitMaterials()
     {
-        this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
+        this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(10.f), glm::vec3(1.f),
             0, 1));
     }
 
     void Application::InitLights()
     {
-        this->lights.push_back(new glm::vec3(0.f, 0.f, 1.0f));
+        this->lights.push_back(new glm::vec3(0.5f, 0.f, 0.f));
     }
 
     void Application::InitUniforms()
@@ -143,6 +143,40 @@ namespace Engine
 
         Shader* ui_program = this->shaders[SHADER_UI_PROGRAM];
         ui_program->setVec3f(*this->lights[0], "lightPos0");
+    }
+
+    void Application::CastRay()
+    {
+        glm::vec3 sdlMousePos = inputHandler->GetMousePosition();
+
+        float ndcX = (2.0f * sdlMousePos.x) / windowWidth - 1.0f;
+        float ndcY = 1.0f - (2.0f * sdlMousePos.y) / windowHeight;
+
+        glm::mat4 viewMatrix = GetViewMatrix();
+        glm::mat4 viewProjectionInverse = glm::inverse(projectionMatrix * viewMatrix);
+
+        glm::vec4 rayStartNDC(ndcX, ndcY, -1.0, 1.0);
+        glm::vec4 rayEndNDC(ndcX, ndcY, 0.0, 1.0);
+
+        glm::vec4 rayStartWorld = viewProjectionInverse * rayStartNDC;
+        glm::vec4 rayEndWorld = viewProjectionInverse * rayEndNDC;
+
+        rayStartWorld /= rayStartWorld.w;
+        rayEndWorld /= rayEndWorld.w;
+
+        Ray mouseRay { glm::vec3(rayStartWorld), glm::vec3(rayEndWorld) };
+        for (auto layer : layerStack)
+        {
+            auto intersection = layer->CheckCollisions(mouseRay);
+            if (intersection.has_value())
+            {
+                std::cout << "Ray intersected with game object: " << intersection.value().object << std::endl;
+                //Draw ray gizmo
+                std::cout << "Ray: " << glm::to_string(mouseRay.origin) << ", direction: " << glm::to_string(mouseRay.direction()) << std::endl;
+                // Gizmos::DrawLine(mouseRay.origin, mouseRay.direction());
+                //Draw collider gizmo
+            }
+        }
     }
 
     void Application::PushLayer(Layer* layer)
@@ -168,6 +202,8 @@ namespace Engine
 
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
+
+        this->CastRay();
 
         camera.Update();
 
@@ -220,7 +256,14 @@ namespace Engine
         if (inputHandler->GetKeyState(SDLK_e) == KEY_DOWN)
         {
             windowGrab = !windowGrab;
+            SDL_WarpMouseInWindow(window, windowWidth / 2, windowWidth / 2);
             SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
+        }
+
+        if (inputHandler->GetKeyState(SDLK_y) == KEY_DOWN)
+        {
+            drawOnlyWireframes = !drawOnlyWireframes;
+            glPolygonMode(GL_FRONT_AND_BACK, drawOnlyWireframes ? GL_LINE : GL_FILL);
         }
     }
 
@@ -241,9 +284,10 @@ namespace Engine
         this->viewMatrix = this->camera.getViewMatrix();
 
         this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->viewMatrix, "ViewMatrix");
-        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
+        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.transform().GetPosition(), "cameraPos");
 
         //Update size and projectionMatrix
+        SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
         glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
 

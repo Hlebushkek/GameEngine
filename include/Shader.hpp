@@ -10,9 +10,11 @@
 
 #include <glad/glad.h>
 
+#include "Core.hpp"
+
 namespace Engine
 {
-    class Shader
+    class ENGINE_API Shader
     {
     public:
         Shader(const char* vertexFile, const char* fragmentFile, const char* geometryFile = "");

@@ -34,20 +34,22 @@ namespace Engine{
 
     void Button::Render()
     {
-        // ImGui::SetCursorPos(position);
+        ImGui::SetCursorPos(position);
         if (iconTextureID)
-        {
-            if(ImGui::ImageButton(reinterpret_cast<ImTextureID>(static_cast<intptr_t>(iconTextureID)), size))
+        {   
+            if(ImGui::InvisibleButton(name.c_str(), size))
             {
               if (onClickCallback)
                 {
                     onClickCallback(); 
-                }
+                } 
             }
+            ImGui::SetCursorPos(position);
+            ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<intptr_t>(iconTextureID)), size);
         }
         else
-        {
-            if (ImGui::Button(name.c_str(), size))
+        {   
+            if (ImGui::Button(name.c_str(), size ))
             {
                  if (onClickCallback)
                 {

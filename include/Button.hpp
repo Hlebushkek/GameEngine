@@ -21,6 +21,8 @@ public:
 
     void Render();
 
+    const ImVec2& GetSize() const { return size; }
+
     // void SetOnClick(const std::function<void()>& onClick);
 
 private:

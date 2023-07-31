@@ -10,11 +10,11 @@ namespace Engine
     Application* Application::application = nullptr;
 
     Application::Application(const char* title, const int width, const int height)
-        : WINDOW_WIDTH(width), WINDOW_HEIGHT(height), camera(glm::vec3(0.f, 0.f, 1.f))
+        : windowWidth(width), windowHeight(height), camera(glm::vec3(0.f, 0.f, 1.f))
     {
         this->window = nullptr;
-        this->frameBufferWidth = this->WINDOW_WIDTH;
-        this->frameBufferHeight = this->WINDOW_HEIGHT;
+        this->frameBufferWidth = this->windowWidth;
+        this->frameBufferHeight = this->windowHeight;
 
         this->camPosition = glm::vec3(0.f, 0.f, 1.f);
         this->worldUp = glm::vec3(0.f, 1.f, 0.f);
@@ -74,9 +74,10 @@ namespace Engine
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-        window = SDL_CreateWindow(title, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
+        window = SDL_CreateWindow(title, windowWidth, windowHeight, windowFlags);
         assert(this->window);
 
+        SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
 
         this->glContext = SDL_GL_CreateContext(window);
@@ -148,8 +149,8 @@ namespace Engine
     {
         glm::vec3 sdlMousePos = inputHandler->GetMousePosition();
 
-        float ndcX = (2.0f * sdlMousePos.x) / frameBufferWidth - 1.0f;
-        float ndcY = 1.0f - (2.0f * sdlMousePos.y) / frameBufferHeight;
+        float ndcX = (2.0f * sdlMousePos.x) / windowWidth - 1.0f;
+        float ndcY = 1.0f - (2.0f * sdlMousePos.y) / windowHeight;
 
         glm::mat4 viewMatrix = GetViewMatrix();
         glm::mat4 viewProjectionInverse = glm::inverse(projectionMatrix * viewMatrix);
@@ -255,6 +256,7 @@ namespace Engine
         if (inputHandler->GetKeyState(SDLK_e) == KEY_DOWN)
         {
             windowGrab = !windowGrab;
+            SDL_WarpMouseInWindow(window, windowWidth / 2, windowWidth / 2);
             SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
         }
 
@@ -285,6 +287,7 @@ namespace Engine
         this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.transform().GetPosition(), "cameraPos");
 
         //Update size and projectionMatrix
+        SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
         glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
 

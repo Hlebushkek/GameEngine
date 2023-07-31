@@ -66,8 +66,8 @@ namespace Engine
 
         bool drawOnlyWireframes = false;
 
-        const int WINDOW_WIDTH;
-        const int WINDOW_HEIGHT;
+        int windowWidth;
+        int windowHeight;
         int frameBufferWidth;
         int frameBufferHeight;
 

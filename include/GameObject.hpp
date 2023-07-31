@@ -24,13 +24,13 @@ public:
     virtual ~GameObject() {}
 
     Transform& transform() { return _transform; }
-    std::optional<Intersection> CollidesWith(const Ray& ray);
 
     void SetMesh(Mesh *mesh) { this->meshes.push_back(mesh); }
 
     //Virtual
     virtual void Render(Shader* shader);
     virtual void Update() {}
+    virtual std::optional<Intersection> CollidesWith(const Ray& ray);
     virtual void OnRayIntersection(const Ray& ray) {}
 
 protected:

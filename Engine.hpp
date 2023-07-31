@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 //For use by Engine app
+#include "include/Intersection.hpp"
 #include "include/Application.hpp"
 #include "include/Layer.hpp"
 #include "include/ImGuiLayer.hpp"

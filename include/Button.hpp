@@ -9,22 +9,27 @@
 #include <iostream>
 #include <functional>
 
-namespace Engine{
-    class ENGINE_API Button {
-        public:
+namespace Engine
+{
 
-            Button(const std::string& name, const ImVec2& position, const ImVec2& size, const std::string& iconPath, const std::function<void()>& onClickCallback = nullptr);
-            ~Button();
+class ENGINE_API Button
+{
 
-            void Render();
+public:
+    Button(const std::string& name, const ImVec2& position, const ImVec2& size, const std::string& iconPath, const std::function<void()>& onClickCallback = nullptr);
+    ~Button();
 
-            // void SetOnClick(const std::function<void()>& onClick);
+    void Render();
 
-        private:
-            std::string name;
-            ImVec2 position;
-            ImVec2 size;
-            GLuint iconTextureID;
-            std::function<void()> onClickCallback = nullptr;
-        };
+    // void SetOnClick(const std::function<void()>& onClick);
+
+private:
+    std::string name;
+    ImVec2 position;
+    ImVec2 size;
+    GLuint iconTextureID;
+    std::function<void()> onClickCallback = nullptr;
+
+};
+
 }

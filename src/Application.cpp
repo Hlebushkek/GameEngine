@@ -255,7 +255,7 @@ namespace Engine
         if (inputHandler->GetKeyState(SDLK_e) == KEY_DOWN)
         {
             windowGrab = !windowGrab;
-            SDL_WarpMouseInWindow(window, windowWidth / 2, windowWidth / 2);
+            SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
             SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
         }
 

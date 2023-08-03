@@ -121,7 +121,8 @@ namespace Engine
         void InitLights();
         void InitUniforms();
 
-        void CastRay();
+        GameObject *hoveredObject = nullptr; //Todo: move it
+        void CastRay(InputState state);
 
         void Update();
         void UpdateDeltaTime();

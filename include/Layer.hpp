@@ -17,20 +17,12 @@ namespace Engine
         Layer(const char* name);
         virtual ~Layer();
 
+        std::optional<Intersection> CheckRayCast(const Ray& ray, const std::vector<int>& buttons);
+
         virtual void OnAttach() {}
         virtual void OnDetach() {}
         virtual void Update() { for (auto& object : renderableObjects) object->Update(); }
-        virtual std::optional<Intersection> CheckCollisions(const Ray& ray)
-        {
-            for (auto& object : renderableObjects)
-            {
-                auto result = object->CollidesWith(ray);
-                if (result.has_value())
-                    return result;
-            }
-
-            return std::nullopt;
-        }
+        virtual void CheckCollisions();
 
         virtual void Render(Shader* shader);
         virtual void RenderUI(Shader* shader);

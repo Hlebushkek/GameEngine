@@ -144,8 +144,12 @@ namespace Engine
         ui_program->setVec3f(*this->lights[0], "lightPos0");
     }
 
-    void Application::CastRay()
+    void Application::CastRay(InputState state)
     {
+        std::vector<int> buttons = inputHandler->GetMouseButtonsMatchingState(state);
+        if (buttons.size() <= 0)
+            return;
+
         glm::vec3 sdlMousePos = inputHandler->GetMousePosition();
 
         float ndcX = (2.0f * sdlMousePos.x) / windowWidth - 1.0f;
@@ -164,16 +168,48 @@ namespace Engine
         rayEndWorld /= rayEndWorld.w;
 
         Ray mouseRay { glm::vec3(rayStartWorld), glm::vec3(rayEndWorld) };
-        for (auto layer : layerStack)
+        for (auto layer : layerStack) //Todo: Think about layers and raycast
         {
-            auto intersection = layer->CheckCollisions(mouseRay);
+            auto intersection = layer->CheckRayCast(mouseRay, buttons);
             if (intersection.has_value())
             {
-                std::cout << "Ray intersected with game object: " << intersection.value().object << std::endl;
-                //Draw ray gizmo
-                std::cout << "Ray: " << glm::to_string(mouseRay.origin) << ", direction: " << glm::to_string(mouseRay.direction()) << std::endl;
-                // Gizmos::DrawLine(mouseRay.origin, mouseRay.direction());
-                //Draw collider gizmo
+                switch (state)
+                {
+                case InputState::KEY_DOWN:
+                    for (auto& button : buttons)
+                        intersection.value().object->OnMouseDown(button);
+                    break;
+                case InputState::KEY_UP:
+                    for (auto& button : buttons)
+                        intersection.value().object->OnMouseUp(button);
+                    break;
+                case InputState::KEY_RELEASED:
+                    if (!this->hoveredObject)
+                    {
+                        this->hoveredObject = intersection.value().object;
+                        intersection.value().object->OnMouseEnter();
+                    }
+                    else if (intersection.value().object != this->hoveredObject)
+                    {
+                        this->hoveredObject->OnMouseExit();
+                        intersection.value().object->OnMouseEnter();
+                        this->hoveredObject = intersection.value().object;
+                    }
+                    break;
+                default: break;
+                }
+                // std::cout << "Ray intersected with game object: " << intersection.value().object << std::endl;
+                // //Draw ray gizmo
+                // std::cout << "Ray: " << glm::to_string(mouseRay.origin) << ", direction: " << glm::to_string(mouseRay.direction()) << std::endl;
+                break;
+            }
+            else
+            {
+                if (state == KEY_RELEASED && this->hoveredObject)
+                {
+                    this->hoveredObject->OnMouseExit();
+                    this->hoveredObject = nullptr;
+                }
             }
         }
     }
@@ -201,8 +237,6 @@ namespace Engine
 
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
         this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
-
-        this->CastRay();
 
         camera.Update();
 
@@ -264,6 +298,10 @@ namespace Engine
             drawOnlyWireframes = !drawOnlyWireframes;
             glPolygonMode(GL_FRONT_AND_BACK, drawOnlyWireframes ? GL_LINE : GL_FILL);
         }
+
+        this->CastRay(KEY_RELEASED);
+        this->CastRay(KEY_DOWN);
+        this->CastRay(KEY_UP);
     }
 
     void Application::UpdateDeltaTime()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+#include <vector>
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 #include "Core.hpp"
@@ -8,7 +9,7 @@
 namespace Engine
 {
 
-enum KeyState
+enum InputState
 {
     KEY_RELEASED = 0,
     KEY_DOWN = 1 << 0,
@@ -30,10 +31,11 @@ public:
 
     void HandleInput(SDL_Event& event);
 
-    KeyState GetKeyState(SDL_KeyCode key);
-    KeyState GetKeyState(SDL_Scancode key);
+    InputState GetKeyState(SDL_KeyCode key);
+    InputState GetKeyState(SDL_Scancode key);
     
-    bool IsMouseButtonPressed(int button);
+    InputState GetMouseButtonState(int button);
+    std::vector<int> GetMouseButtonsMatchingState(InputState state);
 
     void Reset();
 
@@ -49,10 +51,11 @@ private:
     void HandleMouseMotionInput(SDL_Event& event);
     void HandleMouseWheelInput(SDL_Event& event);
 
-    KeyState keyStates[512];
-    bool mouseButtons[32];
+    InputState keyStates[512];
+    InputState mouseStates[5];
 
     std::queue<SDL_Scancode> keyStateToUpdate;
+    std::queue<Uint8> mouseStateToUpdate;
 
     //Mouse input
     bool mouseMoved;

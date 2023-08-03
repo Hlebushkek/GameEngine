@@ -25,18 +25,36 @@ public:
 
     Transform& transform() { return _transform; }
 
-    void SetMesh(Mesh *mesh) { this->meshes.push_back(mesh); }
+    void AddMesh(Mesh *mesh) { this->meshes.push_back(mesh); }
+    void AddTexture(Texture *texture) { this->textures.push_back(texture); }
+    void SetTexture(Texture *texture, size_t index)
+    {
+        if (index > this->textures.size() - 1)
+            this->textures.push_back(texture);
+        else
+            this->textures[index] = texture;
+    }
+    void RemoveTextureAt(size_t index)
+    {
+        if (index >= 0 && index < textures.size())
+            textures.erase(textures.begin() + index);
+    }
 
     //Virtual
     virtual void Render(Shader* shader);
     virtual void Update() {}
     virtual std::optional<Intersection> CollidesWith(const Ray& ray);
-    virtual void OnRayIntersection(const Ray& ray) {}
+
+    virtual void OnMouseEnter() { std::cout << "OnMouseEnter: " << this << std::endl; }
+    virtual void OnMouseExit() { std::cout << "OnMouseExit: " << this << std::endl; }
+    virtual void OnMouseDown(int button) {}
+    virtual void OnMouseUp(int button) {}
 
 protected:
     Transform _transform;
     Collider *collider;
     std::vector<Mesh*> meshes;
+    std::vector<Texture*> textures;
     
     void UpdateUniforms(Shader* shader);
 };

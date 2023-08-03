@@ -29,14 +29,14 @@ public:
     void AddTexture(Texture *texture) { this->textures.push_back(texture); }
     void SetTexture(Texture *texture, size_t index)
     {
-        if (index > this->textures.size() - 1)
+        if (textures.size() <= index)
             this->textures.push_back(texture);
         else
             this->textures[index] = texture;
     }
     void RemoveTextureAt(size_t index)
     {
-        if (index >= 0 && index < textures.size())
+        if (textures.size() != 0 && index >= 0 && index < textures.size())
             textures.erase(textures.begin() + index);
     }
 

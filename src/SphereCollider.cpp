@@ -6,11 +6,7 @@ namespace Engine
 {
 
 SphereCollider::SphereCollider(float radius, glm::vec3 positionOffset)
-    : radius(radius), positionOffset(positionOffset)
-{
-    Engine::Primitive sphere = Engine::Sphere(radius);
-    this->mesh = new Mesh(sphere);
-}
+    : radius(radius), positionOffset(positionOffset) {}
 
 std::optional<glm::vec3> SphereCollider::CollidesWith(const Ray &ray, const Transform& transform)
 {

@@ -36,8 +36,10 @@ namespace Engine
             return nullptr;
         }
 
-        int width = textureImage->w;
-        int height = textureImage->h;   
+        SDL_Surface* rgbSurface = SDL_ConvertSurfaceFormat(textureImage, SDL_PIXELFORMAT_RGBA32);
+
+        int width = rgbSurface->w;
+        int height = rgbSurface->h;   
 
         GLuint id;
         glGenTextures(1, &id);
@@ -48,8 +50,8 @@ namespace Engine
         glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
         glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        GLenum imgFormat = textureImage->format->Amask == 0 ? GL_RGB : GL_RGBA;  
-        glTexImage2D(type, 0, imgFormat, width, height, 0, imgFormat, GL_UNSIGNED_BYTE, textureImage->pixels);
+        GLenum imgFormat = rgbSurface->format->Amask == 0 ? GL_RGB : GL_RGBA;  
+        glTexImage2D(type, 0, imgFormat, width, height, 0, imgFormat, GL_UNSIGNED_BYTE, rgbSurface->pixels);
         glGenerateMipmap(type);
 
         texture = new Texture(id, type, width, height);
@@ -58,6 +60,7 @@ namespace Engine
         glActiveTexture(0);
         glBindTexture(type, 0);
         SDL_DestroySurface(textureImage);
+        SDL_DestroySurface(rgbSurface);
 
         return texture;
     }

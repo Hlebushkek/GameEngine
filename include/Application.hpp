@@ -53,6 +53,8 @@ namespace Engine
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
 
+        virtual void Update();
+
     private:
         //Singleton
         static Application* application;
@@ -124,7 +126,6 @@ namespace Engine
         GameObject *hoveredObject = nullptr; //Todo: move it
         void CastRay(InputState state);
 
-        void Update();
         void UpdateDeltaTime();
         void HandlEvents();
         void UpdateUniforms();

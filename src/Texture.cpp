@@ -39,7 +39,7 @@ namespace Engine
         SDL_Surface* rgbSurface = SDL_ConvertSurfaceFormat(textureImage, SDL_PIXELFORMAT_RGBA32);
 
         int width = rgbSurface->w;
-        int height = rgbSurface->h;   
+        int height = rgbSurface->h;
 
         GLuint id;
         glGenTextures(1, &id);

@@ -24,6 +24,7 @@ namespace Engine
         void unuse();
 
         void set1i(GLint value, const GLchar* name);
+        void set1f(GLfloat value, const GLchar* name);
 
         void setVec1f(GLfloat value, const GLchar* name);
         void setVec2f(glm::fvec2 value, const GLchar* name);

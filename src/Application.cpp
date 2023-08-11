@@ -30,7 +30,6 @@ namespace Engine
         this->initMatrices();
         this->InitShaders();
         this->InitMaterials();
-        this->InitLights();
         this->InitUniforms();
 
         application = this;
@@ -51,9 +50,6 @@ namespace Engine
         
         for (size_t i = 0; i < this->materials.size(); i++)
             delete this->materials[i];
-
-        for (size_t i = 0; i < this->meshes.size(); i++)
-            delete this->meshes[i];
 
         for (size_t i = 0; i < this->lights.size(); i++)
             delete this->lights[i];
@@ -127,21 +123,22 @@ namespace Engine
             0, 1));
     }
 
-    void Application::InitLights()
-    {
-        this->lights.push_back(new glm::vec3(0.5f, 0.f, 0.f));
-    }
-
     void Application::InitUniforms()
     {
         Shader* core_program = this->shaders[SHADER_CORE_PROGRAM];
         core_program->setMat4fv(this->viewMatrix, "ViewMatrix");
         core_program->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
 
-        core_program->setVec3f(*this->lights[0], "lightPos0");
+        for (size_t i = 0; i < lights.size(); i++)
+            lights[i]->SendToShader(*core_program, i);
+        for (size_t i = lights.size(); i < 20; i++)
+        {
+            std::string uniformName = "lights[" + std::to_string(i) + "].";
+            core_program->set1i(0, (uniformName  + "type").c_str());
+        }
 
-        Shader* ui_program = this->shaders[SHADER_UI_PROGRAM];
-        ui_program->setVec3f(*this->lights[0], "lightPos0");
+        // Shader* ui_program = this->shaders[SHADER_UI_PROGRAM];
+        // ui_program->setVec3f(*this->lights[0]., "lightPos0");
     }
 
     void Application::CastRay(InputState state)
@@ -332,6 +329,14 @@ namespace Engine
         this->projectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
             this->nearPlane, this->farPlane);
         this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
+
+        for (size_t i = 0; i < lights.size(); i++)
+            lights[i]->SendToShader(*this->shaders[SHADER_CORE_PROGRAM], i);
+        for (size_t i = lights.size(); i < 20; i++)
+        {
+            std::string uniformName = "lights[" + std::to_string(i) + "].";
+            this->shaders[SHADER_CORE_PROGRAM]->set1i(0, (uniformName  + "type").c_str());
+        }
     }
     
     glm::mat4 Application::GetViewMatrix()

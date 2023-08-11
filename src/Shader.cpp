@@ -46,6 +46,15 @@ namespace Engine
         this->unuse();
     }
 
+    void Shader::set1f(GLfloat value, const GLchar* name)
+    {
+        this->use();
+
+        glUniform1f(glGetUniformLocation(this->id, name), value);
+
+        this->unuse();
+    }
+
     void Shader::setVec1f(GLfloat value, const GLchar* name)
     {
         this->use();

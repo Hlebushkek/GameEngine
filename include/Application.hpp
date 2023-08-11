@@ -11,6 +11,7 @@
 #include <backends/imgui_impl_opengl3.h>
 #include "Core.hpp"
 #include "Mesh.hpp"
+#include "Lights.hpp"
 #include "InputHandler.hpp"
 #include "Camera.hpp"
 #include "LayerStack.hpp"
@@ -32,6 +33,8 @@ namespace Engine
         virtual ~Application();
         void Run();
 
+        void AddLight(Light *light) { lights.push_back(light); }
+
         static Application* Get() { return application; }
         Camera* GetCamera() { return &camera; }
 
@@ -47,13 +50,16 @@ namespace Engine
         glm::mat4 GetViewMatrix();
 
     protected:
-        //Layers
-        ImGuiLayer* imGuiLayer;
-
+        ImGuiLayer *imGuiLayer = nullptr;
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
 
+        GameObject *hoveredObject = nullptr; //Todo: move it
+        void CastRay(InputState state);
+
         virtual void Update();
+        virtual void HandlEvents();
+        virtual void UpdateUniforms();
 
     private:
         //Singleton
@@ -96,11 +102,8 @@ namespace Engine
         //Materials
         std::vector<Material*> materials;
 
-        //Meshes
-        std::vector<Mesh*> meshes;
-
         //Lights
-        std::vector<glm::vec3*> lights;
+        std::vector<Light*> lights;
 
         //Event
         SDL_Event event;
@@ -119,16 +122,10 @@ namespace Engine
         void initMatrices();
         void InitShaders();
         void InitMaterials();
-        
-        void InitLights();
+
         void InitUniforms();
 
-        GameObject *hoveredObject = nullptr; //Todo: move it
-        void CastRay(InputState state);
-
         void UpdateDeltaTime();
-        void HandlEvents();
-        void UpdateUniforms();
     };
 
     Application* CreateApplication();

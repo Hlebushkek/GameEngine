@@ -14,4 +14,5 @@
 #include "include/SphereCollider.hpp"
 #include "include/BoxCollider.hpp"
 #include "include/Button.hpp"
+#include "include/Lights.hpp"
 //

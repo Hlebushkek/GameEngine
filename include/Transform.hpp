@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -7,6 +8,8 @@
 
 namespace Engine
 {
+
+class GameObject; 
 
 class Transform {
 public:
@@ -52,10 +55,38 @@ public:
 
     void UpdateDirections();
 
+    void SetParent(Transform* newParent)
+    {
+        if (parent != nullptr) parent->RemoveChild(this); 
+        parent = newParent;
+        if (parent != nullptr) parent->AddChild(this);
+        
+    }
+
+    Transform* GetParent() const 
+    {
+        return parent;
+    }
+
+    const std::vector<Transform*>& GetChildren() const
+    {
+        return children;
+    }
+
     static const glm::vec3 WORLD_FRONT; // Todo: move it to some kind of world settings class
     static const glm::vec3 WORLD_UP; // Todo: move it to some kind of world settings class
 
 private:
+    void AddChild(Transform* child)
+    {
+        children.push_back(child);
+    }
+
+    void RemoveChild(Transform* child) 
+    {
+        children.erase(std::remove(children.begin(), children.end(), child), children.end());
+    }
+
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
@@ -64,6 +95,8 @@ private:
     glm::vec3 right;
     glm::vec3 up;
 
+    Transform* parent;
+    std::vector<Transform*> children; 
 };
 
 }

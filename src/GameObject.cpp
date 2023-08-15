@@ -4,7 +4,7 @@ namespace Engine
 {
 
 GameObject::GameObject(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-    : _transform(position, rotation, scale), collider(nullptr) {}
+    : _transform(this, position, rotation, scale), collider(nullptr) {}
 
 void GameObject::Render(Shader* shader)
 {

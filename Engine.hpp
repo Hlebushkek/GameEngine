@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdio.h>
-//For use by Engine app
+//
 #include "include/Intersection.hpp"
 #include "include/Application.hpp"
 #include "include/Layer.hpp"
@@ -13,6 +13,10 @@
 #include "include/OBJLoader.hpp"
 #include "include/SphereCollider.hpp"
 #include "include/BoxCollider.hpp"
-#include "include/Button.hpp"
 #include "include/Lights.hpp"
+//UI
+#include "include/GUIWindow.hpp"
+#include "include/GUIView.hpp"
+#include "include/GUIInputText.hpp"
+#include "include/GUIButton.hpp"
 //

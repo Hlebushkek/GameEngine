@@ -4,41 +4,40 @@ namespace Engine {
 
 	LayerStack::~LayerStack()
 	{
-		for (Layer* layer : layers)
+		for (const auto& layer : layers)
 		{
 			layer->OnDetach();
-			delete layer;
 		}
 	}
 
-	void LayerStack::PushLayer(Layer* layer)
+	void LayerStack::PushLayer(std::shared_ptr<Layer> layer)
 	{
-		layers.emplace(layers.begin() + layerCounter, layer);
-		layerCounter++;
+		layers.emplace(layers.begin() + layerCounter, std::move(layer));
+		++layerCounter;
 	}
 
-	void LayerStack::PushOverlay(Layer* overlay)
+	void LayerStack::PushOverlay(std::shared_ptr<Layer> overlay)
 	{
-		layers.emplace_back(overlay);
+		layers.emplace_back(std::move(overlay));
 	}
 
-	void LayerStack::PopLayer(Layer* layer)
+	void LayerStack::PopLayer(std::shared_ptr<Layer> layer)
 	{
 		auto it = std::find(layers.begin(), layers.begin() + layerCounter, layer);
 		if (it != layers.begin() + layerCounter)
 		{
-			layer->OnDetach();
+			(*it)->OnDetach();
 			layers.erase(it);
-			layerCounter--;
+			--layerCounter;
 		}
 	}
 
-	void LayerStack::PopOverlay(Layer* overlay)
+	void LayerStack::PopOverlay(std::shared_ptr<Layer> overlay)
 	{
 		auto it = std::find(layers.begin() + layerCounter, layers.end(), overlay);
 		if (it != layers.end())
 		{
-			overlay->OnDetach();
+			(*it)->OnDetach();
 			layers.erase(it);
 		}
 	}

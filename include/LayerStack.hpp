@@ -12,24 +12,24 @@ namespace Engine
 		LayerStack() = default;
 		~LayerStack();
 
-		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* overlay);
-		void PopLayer(Layer* layer);
-		void PopOverlay(Layer* overlay);
+		void PushLayer(std::shared_ptr<Layer> layer);
+    	void PushOverlay(std::shared_ptr<Layer> overlay);
+		void PopLayer(std::shared_ptr<Layer> layer);
+		void PopOverlay(std::shared_ptr<Layer> overlay);
 
-		std::vector<Layer*>::iterator begin() { return layers.begin(); }
-		std::vector<Layer*>::iterator end() { return layers.end(); }
-		std::vector<Layer*>::reverse_iterator rbegin() { return layers.rbegin(); }
-		std::vector<Layer*>::reverse_iterator rend() { return layers.rend(); }
+		auto begin() { return layers.begin(); }
+		auto end() { return layers.end(); }
+		auto rbegin() { return layers.rbegin(); }
+		auto rend() { return layers.rend(); }
 
-		std::vector<Layer*>::const_iterator begin() const { return layers.begin(); }
-		std::vector<Layer*>::const_iterator end()	const { return layers.end(); }
-		std::vector<Layer*>::const_reverse_iterator rbegin() const { return layers.rbegin(); }
-		std::vector<Layer*>::const_reverse_iterator rend() const { return layers.rend(); }
+		auto begin() const { return layers.begin(); }
+		auto end() const { return layers.end(); }
+		auto rbegin() const { return layers.rbegin(); }
+		auto rend() const { return layers.rend(); }
 
-		Layer* back() const { return layers.back(); }
+		std::shared_ptr<Layer> back() const { return layers.back(); }
 	private:
-		std::vector<Layer*> layers;
+		std::vector<std::shared_ptr<Layer>> layers;
 		unsigned int layerCounter = 0;
 	};
 

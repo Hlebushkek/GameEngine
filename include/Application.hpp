@@ -7,8 +7,6 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include <imgui.h>
-#include <backends/imgui_impl_sdl3.h>
-#include <backends/imgui_impl_opengl3.h>
 #include "Core.hpp"
 #include "Mesh.hpp"
 #include "Lights.hpp"
@@ -17,7 +15,6 @@
 #include "LayerStack.hpp"
 #include "ImGuiLayer.hpp"
 #include "OBJLoader.hpp"
-#include "Button.hpp"
 
 namespace Engine
 {
@@ -50,9 +47,9 @@ namespace Engine
         glm::mat4 GetViewMatrix();
 
     protected:
-        ImGuiLayer *imGuiLayer = nullptr;
-        void PushLayer(Layer* layer);
-        void PushOverlay(Layer* layer);
+        std::shared_ptr<ImGuiLayer> imGuiLayer = nullptr;
+        void PushLayer(std::shared_ptr<Layer> layer);
+        void PushOverlay(std::shared_ptr<Layer> overlay);
 
         GameObject *hoveredObject = nullptr; //Todo: move it
         void CastRay(InputState state);

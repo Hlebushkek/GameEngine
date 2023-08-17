@@ -32,8 +32,8 @@ namespace Engine
 
         inline const char* GetName() const { return layerName; }
 
-        inline void AddRenderableObject(GameObject* object) { renderableObjects.emplace_back(object); }
-        inline void AddUIObject(UIObject* object) { uiObjects.emplace_back(object); }
+        inline void AddRenderableObject(GameObject* object) { renderableObjects.push_back(object); }
+        inline void AddUIObject(UIObject* object) { uiObjects.push_back(object); }
 
     private:
         const char* layerName;

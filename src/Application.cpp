@@ -36,7 +36,7 @@ namespace Engine
 
         inputHandler = InputHandler::Get();
 
-        imGuiLayer = new ImGuiLayer();
+        imGuiLayer = std::make_shared<ImGuiLayer>();
 		PushOverlay(imGuiLayer);
         std::cout << "End App constructor" << std::endl;
     }
@@ -211,16 +211,16 @@ namespace Engine
         }
     }
 
-    void Application::PushLayer(Layer* layer)
+    void Application::PushLayer(std::shared_ptr<Layer> layer)
     {
         layerStack.PushLayer(layer);
-		layer->OnAttach();
+        layer->OnAttach();
     }
 
-    void Application::PushOverlay(Layer* layer)
+    void Application::PushOverlay(std::shared_ptr<Layer> overlay)
     {
-        layerStack.PushOverlay(layer);
-        layer->OnAttach();
+        layerStack.PushOverlay(overlay);
+        overlay->OnAttach();
     }
 
     void Application::Update()
@@ -237,18 +237,18 @@ namespace Engine
 
         camera.Update();
 
-        for (Layer* layer : layerStack)
+        for (const auto& layer : layerStack)
         {
             layer->Update();
             layer->Render(this->shaders[SHADER_CORE_PROGRAM]);
         }
 
-        for (Layer* layer : layerStack)
+        for (const auto& layer : layerStack)
             layer->RenderUI(this->shaders[SHADER_UI_PROGRAM]);
 
         imGuiLayer->Begin();
         {
-            for (Layer* layer : layerStack)
+            for (const auto& layer : layerStack)
                 layer->OnImGuiRender();
         }
         imGuiLayer->End();

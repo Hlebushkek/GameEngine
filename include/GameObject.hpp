@@ -17,13 +17,20 @@
 namespace Engine
 {
 
-class ENGINE_API GameObject
+class ENGINE_API GameObject : std::enable_shared_from_this<GameObject>
 {
 public:
     GameObject(glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
     virtual ~GameObject() {}
 
-    Transform& transform() { return _transform; }
+    template <typename T, typename... Args>
+    static std::shared_ptr<T> Instantiate(Args&&... args) {
+        std::shared_ptr<T> instance = std::make_shared<T>(std::forward<Args>(args)...);
+        instance->Initialize(instance);
+        return instance;
+    }
+
+    std::shared_ptr<Transform> transform() { return m_transform; }
 
     void AddMesh(Mesh *mesh) { this->meshes.push_back(mesh); }
     void AddTexture(Texture *texture) { this->textures.push_back(texture); }
@@ -41,9 +48,13 @@ public:
     }
 
     //Virtual
+    virtual void Initialize(std::shared_ptr<GameObject> object);
+    
     virtual void Render(Shader* shader);
     virtual void Update() {}
     virtual std::optional<Intersection> CollidesWith(const Ray& ray);
+
+    virtual void OnAttach() {}
 
     virtual void OnMouseEnter() { std::cout << "OnMouseEnter: " << this << std::endl; }
     virtual void OnMouseExit() { std::cout << "OnMouseExit: " << this << std::endl; }
@@ -51,7 +62,7 @@ public:
     virtual void OnMouseUp(int button) {}
 
 protected:
-    Transform _transform;
+    std::shared_ptr<Transform> m_transform;
     Collider *collider;
     std::vector<Mesh*> meshes;
     std::vector<Texture*> textures;

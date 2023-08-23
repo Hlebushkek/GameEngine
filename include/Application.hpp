@@ -28,6 +28,8 @@ namespace Engine
     public:
         Application(const char* title, const int width, const int height);
         virtual ~Application();
+        virtual void ApplicationWillTerminate() {}
+
         void Run();
 
         void AddLight(Light *light) { lights.push_back(light); }

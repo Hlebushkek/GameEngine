@@ -32,12 +32,12 @@ namespace Engine
 
         inline const char* GetName() const { return layerName; }
 
-        inline void AddRenderableObject(GameObject* object) { renderableObjects.push_back(object); }
+        inline void AddRenderableObject(std::shared_ptr<GameObject> object) { renderableObjects.push_back(object); object->OnAttach(); }
         inline void AddUIObject(UIObject* object) { uiObjects.push_back(object); }
 
     private:
         const char* layerName;
-        std::vector<GameObject*> renderableObjects;
+        std::vector<std::shared_ptr<GameObject>> renderableObjects;
         std::vector<UIObject*> uiObjects;
     };
 }

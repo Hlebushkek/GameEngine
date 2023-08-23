@@ -273,7 +273,10 @@ namespace Engine
             this->inputHandler->HandleInput(event);
 
             if (event.type == SDL_EVENT_QUIT)
+            {
+                ApplicationWillTerminate();
                 this->windowShouldClose = true;
+            }
         }
 
         if (inputHandler->GetKeyState(SDLK_ESCAPE) == KEY_DOWN)
@@ -318,7 +321,7 @@ namespace Engine
         this->viewMatrix = this->camera.getViewMatrix();
 
         this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->viewMatrix, "ViewMatrix");
-        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.transform().GetPosition(), "cameraPos");
+        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.transform()->GetPosition(), "cameraPos");
 
         //Update size and projectionMatrix
         SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);

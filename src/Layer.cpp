@@ -11,7 +11,7 @@ namespace Engine
     {
         std::optional<Intersection> result = std::nullopt;
 
-        for (GameObject* object : this->renderableObjects)
+        for (auto object : renderableObjects)
         {
             auto intersection = object->CollidesWith(ray);
             if (intersection.has_value())
@@ -29,21 +29,18 @@ namespace Engine
 
     void Layer::Render(Shader *shader)
     {
-        for (GameObject* object : this->renderableObjects)
+        for (auto object : renderableObjects)
             object->Render(shader);
     }
 
     void Layer::RenderUI(Shader* shader)
     {
-        for (UIObject* object : this->uiObjects)
+        for (auto object : uiObjects)
             object->Render(shader);
     }
 
     Layer::~Layer()
     {
-        for (GameObject* object : this->renderableObjects)
-            delete object;
-
         for (UIObject* object : this->uiObjects)
             delete object;
     }

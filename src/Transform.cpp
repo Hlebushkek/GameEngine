@@ -27,4 +27,25 @@ void Transform::UpdateDirections()
     this->up = glm::normalize(glm::cross(this->right, this->front));
 }
 
+void Transform::SetParent(std::weak_ptr<Transform> parent)
+{
+    auto sharedPtr = shared_from_this();
+
+    if (auto oldParent = m_parent.lock())
+        oldParent->RemoveChild(sharedPtr);
+
+    m_parent = parent;
+
+    if (auto newParent = m_parent.lock())
+        newParent->AddChild(sharedPtr);
+}
+
+void Transform::UnassignParent()
+{
+    auto sharedPtr = shared_from_this();
+
+    if (auto oldParent = m_parent.lock())
+        oldParent->RemoveChild(sharedPtr);
+}
+
 }

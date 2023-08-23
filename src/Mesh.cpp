@@ -20,7 +20,6 @@ namespace Engine
             glDeleteBuffers(1, &this->EBO);
     }
 
-    //PUBLIC
     void Mesh::Render(Shader* shader)
     {     
         shader->use();
@@ -39,7 +38,6 @@ namespace Engine
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    //PRIVATE
     void Mesh::initVAO(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices)
     {
         //Set variables

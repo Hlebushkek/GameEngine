@@ -6,11 +6,11 @@ namespace Engine
 
 BoxCollider::BoxCollider(glm::vec3 positionOffset) : positionOffset(positionOffset) {}
 
-std::optional<glm::vec3> BoxCollider::CollidesWith(const Ray &ray, const Transform& transform)
+std::optional<glm::vec3> BoxCollider::CollidesWith(const Ray &ray, std::shared_ptr<Transform> transform)
 {
-    glm::vec3 center = transform.GetPosition() + positionOffset;
-    glm::vec3 minBound = center - transform.GetScale() * 0.5f;
-    glm::vec3 maxBound = center + transform.GetScale() * 0.5f;
+    glm::vec3 center = transform->GetPosition() + positionOffset;
+    glm::vec3 minBound = center - transform->GetScale() * 0.5f;
+    glm::vec3 maxBound = center + transform->GetScale() * 0.5f;
 
     float t1 = (minBound.x - ray.origin.x) / ray.direction().x;
     float t2 = (maxBound.x - ray.origin.x) / ray.direction().x;

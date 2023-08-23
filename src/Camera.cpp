@@ -52,22 +52,22 @@ namespace Engine
         switch (direction)
         {
         case FORWARD:
-            _transform.Move( _transform.GetFront() * movementSpeed * dt);
+            m_transform->Move( m_transform->GetFront() * movementSpeed * dt);
             break;
         case BACKWARD:
-            _transform.Move(-_transform.GetFront() * movementSpeed * dt);
+            m_transform->Move(-m_transform->GetFront() * movementSpeed * dt);
             break;
         case LEFT:
-            _transform.Move(-_transform.GetRight() * movementSpeed * dt);
+            m_transform->Move(-m_transform->GetRight() * movementSpeed * dt);
             break;
         case RIGHT:
-            _transform.Move( _transform.GetRight() * movementSpeed * dt);
+            m_transform->Move( m_transform->GetRight() * movementSpeed * dt);
             break;
         case UP:
-            _transform.Move( _transform.GetUp()    * movementSpeed * dt);
+            m_transform->Move( m_transform->GetUp()    * movementSpeed * dt);
             break;
         case DOWN:
-            _transform.Move(-_transform.GetUp()    * movementSpeed * dt);
+            m_transform->Move(-m_transform->GetUp()    * movementSpeed * dt);
             break;
         default:
             break;
@@ -76,26 +76,26 @@ namespace Engine
 
     void Camera::updateMouseMotionInput(const float& dt, const int& offsetX, const int& offsetY)
     {
-        _transform.Rotate({
+        m_transform->Rotate({
             -static_cast<GLfloat>(offsetY * this->sensitivity * dt),
             -static_cast<GLfloat>(offsetX * this->sensitivity * dt),
             0
         });
 
-        glm::vec3 rotation = _transform.GetRotation();
+        glm::vec3 rotation = m_transform->GetRotation();
         if (rotation.x >= 80.f)
-            _transform.SetRotation({ 80.f, rotation.y, 0 });
+            m_transform->SetRotation({ 80.f, rotation.y, 0 });
         else if (rotation.x < -80.f)
-            _transform.SetRotation({-80.f, rotation.y, 0 });
+            m_transform->SetRotation({-80.f, rotation.y, 0 });
 
-        rotation = _transform.GetRotation();
+        rotation = m_transform->GetRotation();
         if (rotation.y >= 360.f || rotation.y < -360.f)
-            _transform.SetRotation({ rotation.x, 0, 0 });
+            m_transform->SetRotation({ rotation.x, 0, 0 });
     }
 
     const glm::mat4 Camera::getViewMatrix()
     {
-        this->viewMatrix = glm::lookAt(_transform.GetPosition(), _transform.GetPosition() + _transform.GetFront(), _transform.GetUp());
+        this->viewMatrix = glm::lookAt(m_transform->GetPosition(), m_transform->GetPosition() + m_transform->GetFront(), m_transform->GetUp());
         return this->viewMatrix;
     }
     

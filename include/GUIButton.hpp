@@ -14,14 +14,21 @@ class ENGINE_API GUIButton : public GUIObject
 {
 
 public:
-    GUIButton(std::string title, ImVec2 position, ImVec2 size, std::string iconPath = "", const std::function<void()>& onClickCallback = nullptr);
+    GUIButton(std::string title, const ImVec2& size = ImVec2(0, 0), const std::string& iconPath = "", const std::function<void()>& onClickCallback = nullptr);
     ~GUIButton();
 
     void InnerRender() override;
+    void PreRenderSetup() override;
+    void AfterRenderSetup() override;
 
     const ImVec2& GetSize() const { return m_size; }
 
+    void SetCustomPosition(const ImVec2& position) { useCustomPosition = true; this->m_position = position; }
     void SetOnClick(const std::function<void()>& onClick);
+
+public:
+    bool useCustomPosition = false;
+    bool enabled = true;
 
 private:
     std::string m_title;

@@ -12,10 +12,10 @@ void GUIWindow::InnerRender()
 
 void GUIWindow::Render()
 {
-    if (!isVisible) return;
+    if (!visible) return;
     this->PreRenderSetup();
     
-    if (ImGui::Begin(m_title.c_str(), &isVisible, m_windowFlags))
+    if (ImGui::Begin(m_title.c_str(), &visible, m_windowFlags))
         this->InnerRender();
     ImGui::End();
 }

@@ -13,7 +13,7 @@ class ENGINE_API GUIWindow : public GUIObject
 {
 public:
     GUIWindow(std::string title, bool isOpen = true, ImGuiWindowFlags windowFlags = 0)
-        : GUIObject(), m_title(title), m_windowFlags(windowFlags) { this->isVisible = isOpen; }
+        : GUIObject(), m_title(title), m_windowFlags(windowFlags) { this->visible = isOpen; }
 
     void Render() override;
     void InnerRender() override;

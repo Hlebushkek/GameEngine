@@ -11,18 +11,19 @@ class GUIObject
 public:
     virtual void Render()
     {
-        if (!isVisible) return;
-        this->PreRenderSetup();
-
+        if (!visible) return;
+        PreRenderSetup();
         InnerRender();
+        AfterRenderSetup();
     }
 
 public:
-    bool isVisible = true;
+    bool visible = true;
 
 protected:
     virtual void InnerRender() = 0;
     virtual void PreRenderSetup() {}
+    virtual void AfterRenderSetup() {}
 
 };
 

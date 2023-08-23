@@ -4,8 +4,8 @@
 namespace Engine
 {
 
-GUIButton::GUIButton(std::string title, ImVec2 position, ImVec2 size, std::string iconPath, const std::function<void()>& onClickCallback)
-    : GUIObject(), m_title(title), m_position(position), m_size(size), m_iconTextureID(0), m_onClickCallback(onClickCallback)
+GUIButton::GUIButton(std::string title, const ImVec2& size, const std::string& iconPath, const std::function<void()>& onClickCallback)
+    : GUIObject(), m_title(title), m_position(0, 0), m_size(size), m_iconTextureID(0), m_onClickCallback(onClickCallback)
 {
     SDL_Surface* iconSurface = IMG_Load(iconPath.c_str());
     if (!iconSurface)
@@ -29,21 +29,43 @@ GUIButton::~GUIButton()
 
 void GUIButton::InnerRender()
 {
-    ImGui::SetCursorPos(m_position);
+    ImVec2 cursorPos = ImGui::GetCursorPos();
+    if (useCustomPosition)
+        cursorPos = m_position;
+    
+    ImGui::SetCursorPos(cursorPos);
     if (m_iconTextureID)
     {   
-        if(ImGui::InvisibleButton(m_title.c_str(), m_size))
+        if(ImGui::InvisibleButton(m_title.c_str(), m_size) && enabled)
             if (m_onClickCallback)
                 m_onClickCallback();
 
-        ImGui::SetCursorPos(m_position);
+        ImGui::SetCursorPos(cursorPos);
         ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<intptr_t>(m_iconTextureID)), m_size);
     }
     else
     {   
-        if (ImGui::Button(m_title.c_str(), m_size))
+        if (ImGui::Button(m_title.c_str(), m_size) && enabled)
             if (m_onClickCallback)
                 m_onClickCallback();
+    }
+}
+
+void GUIButton::PreRenderSetup()
+{
+    if (!enabled)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+    }
+}
+
+void GUIButton::AfterRenderSetup()
+{
+    if (!enabled)
+    {
+        ImGui::PopStyleColor(3);
     }
 }
 

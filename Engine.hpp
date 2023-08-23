@@ -18,5 +18,6 @@
 #include "include/GUIWindow.hpp"
 #include "include/GUIView.hpp"
 #include "include/GUIInputText.hpp"
+#include "include/GUIText.hpp"
 #include "include/GUIButton.hpp"
 //

@@ -56,8 +56,8 @@ public:
 
     virtual void OnAttach() {}
 
-    virtual void OnMouseEnter() { std::cout << "OnMouseEnter: " << this << std::endl; }
-    virtual void OnMouseExit() { std::cout << "OnMouseExit: " << this << std::endl; }
+    virtual void OnMouseEnter() {}
+    virtual void OnMouseExit() {}
     virtual void OnMouseDown(int button) {}
     virtual void OnMouseUp(int button) {}
 

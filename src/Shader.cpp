@@ -1,4 +1,5 @@
 #include "Shader.hpp"
+#include "config.h"
 
 namespace Engine
 {
@@ -110,12 +111,9 @@ namespace Engine
     }
 
     //Private methods
-    std::string Shader::loadShaderSource(const char* fileName)
+    std::string Shader::loadShaderSource(const std::string &fileName)
     {
-        char* presfix = "../resources/";
-        char* full_path = (char*)malloc(strlen(presfix)+strlen(fileName)+1); 
-        strcpy(full_path, presfix); 
-        strcat(full_path, fileName);
+        std::string full_path = RESOURCES_DIR + fileName;
 
         std::string temp = "";
         std::string src = "";
@@ -136,7 +134,7 @@ namespace Engine
         return src;
     }
 
-    GLuint Shader::loadShader(GLenum type, const char* fileName)
+    GLuint Shader::loadShader(GLenum type, const std::string& fileName)
     {
         char infoLog[512];
         GLint success;

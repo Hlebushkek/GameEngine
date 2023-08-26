@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_image.h>
 #include "Texture.hpp"
+#include "config.h"
 
 namespace Engine
 {
@@ -21,13 +22,13 @@ namespace Engine
         glBindTexture(this->type, 0);
     }
 
-    Texture *Texture::LoadTexture(const std::string &fileName, GLenum type)
+    Texture *Texture::LoadTexture(const std::string& fileName, GLenum type)
     {
         if (texturesMap.find(fileName) != texturesMap.end())
             return texturesMap[fileName];
         
         Texture *texture;
-        std::string full_path = "../resources/" + fileName;
+        std::string full_path = RESOURCES_DIR + fileName;
 
         SDL_Surface *textureImage = IMG_Load(full_path.c_str());
         if (!textureImage)

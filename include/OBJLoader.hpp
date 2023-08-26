@@ -15,6 +15,6 @@ namespace Engine
      class ENGINE_API OBJClass
      {
      public:
-          static std::vector<Vertex> loadOBJ(const char* file_name);
+          static std::vector<Vertex> loadOBJ(const std::string& fileName);
      };
 }

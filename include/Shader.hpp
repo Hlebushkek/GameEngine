@@ -38,8 +38,8 @@ namespace Engine
         GLuint id;
 
         //Private Func
-        std::string loadShaderSource(const char* fileName);
-        GLuint loadShader(GLenum type, const char* fileName);
+        std::string loadShaderSource(const std::string& fileName);
+        GLuint loadShader(GLenum type, const std::string& fileName);
 
         void linkProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader);
 

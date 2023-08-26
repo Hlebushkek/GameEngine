@@ -32,7 +32,7 @@ namespace Engine
         void bind(const GLint texture_unit);
         void unbind(GLenum type);
 
-        static Texture *LoadTexture(const std::string &fileName, GLenum type);
+        static Texture *LoadTexture(const std::string& fileName, GLenum type);
 
     private:
         Texture(GLint id, GLenum type, int width, int height);

@@ -1,16 +1,17 @@
-#include "OBJLoader.hpp"
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/ext.hpp>
 #include <glad/glad.h>
+#include "OBJLoader.hpp"
+#include "config.h"
 
 using namespace std;
 using namespace glm;
 
 namespace Engine
 {
-vector<Vertex> OBJClass::loadOBJ(const char* file_name)
+vector<Vertex> OBJClass::loadOBJ(const std::string& fileName)
 {
      //Vertex portions
      vector<fvec3> vertex_positions;
@@ -26,7 +27,7 @@ vector<Vertex> OBJClass::loadOBJ(const char* file_name)
      vector<Vertex> verticies;
      
      stringstream ss;
-     ifstream in_file(file_name);
+     ifstream in_file(RESOURCES_DIR + fileName);
      string line = "";
      string prefix = "";
      vec3 temp_vec3;
@@ -35,7 +36,7 @@ vector<Vertex> OBJClass::loadOBJ(const char* file_name)
      
      //File open erroe check
      if (!in_file.is_open())
-          cout << "ERROR::OBJLOADER::Could not open a file: " << file_name << endl;
+          cout << "ERROR::OBJLOADER::Could not open a file: " << fileName << endl;
 
      //Read one line at a time
      while (getline(in_file, line))

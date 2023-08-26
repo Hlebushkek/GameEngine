@@ -38,7 +38,7 @@ file(GLOB IMGUI_SOURCES "vendors/imgui/*.cpp" "vendors/imgui/*.h"
 )
 add_library(imgui STATIC ${IMGUI_SOURCES})
 
-file(GLOB SOURCES "src/*.cpp" "include/*.hpp")
+file(GLOB SOURCES "src/*.cpp" "include/*.hpp" "include/*.h")
 link_directories(
     ${PROJECT_SOURCE_DIR}/../build/GameEngine/vendors/SDL/
     ${PROJECT_SOURCE_DIR}/../build/GameEngine/vendors/SDL_image/

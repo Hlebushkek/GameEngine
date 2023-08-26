@@ -1,5 +1,6 @@
-#include "GUIButton.hpp"
 #include <backends/imgui_impl_opengl3.h>
+#include "GUIButton.hpp"
+#include "config.h"
 
 namespace Engine
 {
@@ -7,7 +8,7 @@ namespace Engine
 GUIButton::GUIButton(std::string title, const ImVec2& size, const std::string& iconPath, const std::function<void()>& onClickCallback)
     : GUIObject(), m_title(title), m_position(0, 0), m_size(size), m_iconTextureID(0), m_onClickCallback(onClickCallback)
 {
-    SDL_Surface* iconSurface = IMG_Load(iconPath.c_str());
+    SDL_Surface* iconSurface = IMG_Load((RESOURCES_DIR + iconPath).c_str());
     if (!iconSurface)
         return;
 

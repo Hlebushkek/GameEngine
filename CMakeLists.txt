@@ -51,15 +51,10 @@ target_link_libraries(${PROJECT_NAME} glm)
 target_link_libraries(${PROJECT_NAME} imgui)
 target_link_libraries(${PROJECT_NAME} SDL3 SDL3_image)
 
-if(APPLE)
-    set(LIB_EXT dylib)
-    set(LIB_PREFIX lib)
-else()
-    set(LIB_EXT dll)
-    set(LIB_PREFIX)
-endif()
-
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL/${LIB_PREFIX}SDL3.${LIB_EXT} ${CMAKE_BINARY_DIR}/GameEngine/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/GameEngine/vendors/SDL_image/${LIB_PREFIX}SDL3_image.${LIB_EXT} ${CMAKE_BINARY_DIR}/GameEngine/
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:SDL3-shared> ${CMAKE_CURRENT_BINARY_DIR}
+
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:SDL3_image> ${CMAKE_CURRENT_BINARY_DIR}
 )

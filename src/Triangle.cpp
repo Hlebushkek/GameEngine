@@ -11,11 +11,11 @@ namespace Engine
         };
         unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
-        GLuint indices[] =
+        unsigned indices[] =
         {
             0, 1, 2
         };
-        unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
+        unsigned nrOfIndices = sizeof(indices) / sizeof(unsigned);
 
         this->set(vertices.data(), nrOfVertices, indices, nrOfIndices);
     }

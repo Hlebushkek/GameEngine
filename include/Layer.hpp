@@ -11,33 +11,35 @@
 
 namespace Engine
 {
-    class ENGINE_API Layer
-    {
-    public:
-        Layer(const char* name);
-        virtual ~Layer();
 
-        std::optional<Intersection> CheckRayCast(const Ray& ray, const std::vector<int>& buttons);
+class ENGINE_API Layer
+{
+public:
+    Layer(const char* name);
+    virtual ~Layer();
 
-        virtual void OnAttach() {}
-        virtual void OnDetach() {}
-        virtual void Update() { for (auto& object : renderableObjects) object->Update(); }
-        virtual void CheckCollisions();
+    std::optional<Intersection> CheckRayCast(const Ray& ray, const std::vector<int>& buttons);
 
-        virtual void Render(Shader* shader);
-        virtual void RenderUI(Shader* shader);
-        virtual void OnImGuiRender() {}
+    virtual void OnAttach() {}
+    virtual void OnDetach() {}
+    virtual void Update() { for (auto& object : renderableObjects) object->Update(); }
+    virtual void CheckCollisions();
 
-        virtual void OnEvent(SDL_Event& event) {}
+    virtual void Render(Renderer* renderer, Shader* shader);
+    virtual void RenderUI(Renderer* renderer, Shader* shader);
+    virtual void OnImGuiRender() {}
 
-        inline const char* GetName() const { return layerName; }
+    virtual void OnEvent(SDL_Event& event) {}
 
-        inline void AddRenderableObject(std::shared_ptr<GameObject> object) { renderableObjects.push_back(object); object->OnAttach(); }
-        inline void AddUIObject(UIObject* object) { uiObjects.push_back(object); }
+    inline const char* GetName() const { return layerName; }
 
-    private:
-        const char* layerName;
-        std::vector<std::shared_ptr<GameObject>> renderableObjects;
-        std::vector<UIObject*> uiObjects;
-    };
+    inline void AddRenderableObject(std::shared_ptr<GameObject> object) { renderableObjects.push_back(object); object->OnAttach(); }
+    inline void AddUIObject(UIObject* object) { uiObjects.push_back(object); }
+
+private:
+    const char* layerName;
+    std::vector<std::shared_ptr<GameObject>> renderableObjects;
+    std::vector<UIObject*> uiObjects;
+};
+
 }

@@ -39,38 +39,38 @@ namespace Engine
         };
         unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
-        std::vector<GLuint> front =
+        std::vector<unsigned> front =
         {
             0, 1, 2,
             0, 2, 3
         };
-        std::vector<GLuint> right =
+        std::vector<unsigned> right =
         {
             4, 5, 6,
             4, 6, 7
         };
-        std::vector<GLuint> back =
+        std::vector<unsigned> back =
         {
             8, 9,10,
             8,10,11,
         };
-        std::vector<GLuint> left =
+        std::vector<unsigned> left =
         {
             12,13,14,
             12,14,15,
         };
-        std::vector<GLuint> up =
+        std::vector<unsigned> up =
         {
             16,17,18,
             16,18,19,
         };
-        std::vector<GLuint> down =
+        std::vector<unsigned> down =
         {
             23,22,20,
             22,21,20
         };
 
-        std::vector<GLuint> indices;
+        std::vector<unsigned> indices;
 
         if (!(excludedFaces & FORWARD)) indices.insert(indices.end(), front.begin(), front.end());
         if (!(excludedFaces & RIGHT))   indices.insert(indices.end(), right.begin(), right.end());

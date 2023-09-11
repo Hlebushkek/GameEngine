@@ -4,7 +4,6 @@
 #include "Vertex.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include "Material.hpp"
 #include "Primitive.hpp"
 
 namespace Engine
@@ -20,9 +19,9 @@ namespace Engine
         unsigned nrOfVertices;
         unsigned nrOfIndices;
 
-        GLuint VAO;
-        GLuint VBO;
-        GLuint EBO;
+        unsigned VAO;
+        unsigned VBO;
+        unsigned EBO;
 
         glm::vec2 position;
         glm::vec3 rotation;

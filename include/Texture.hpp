@@ -4,9 +4,7 @@
 #include <functional>
 #include <filesystem>
 #include <unordered_map>
-
 #include <glad/glad.h>
-
 #include "Core.hpp"
 
 #ifdef __APPLE__
@@ -20,29 +18,29 @@ namespace std {
 }
 #endif
 
+struct SDL_Surface;
+
 namespace Engine
 {
-    class ENGINE_API Texture
-    {
-    public:
-        ~Texture();
 
-        inline GLuint getID() const { return this->id; }
+class ENGINE_API Texture
+{
+public:
+    ~Texture();
 
-        void bind(const GLint texture_unit);
-        void unbind(GLenum type);
+    void Bind(const int texture_unit);
+    void Unbind();
 
-        static Texture *LoadTexture(const std::string& fileName, GLenum type);
+    static Texture* LoadTexture(const std::string& fileName);
 
-    private:
-        Texture(GLint id, GLenum type, int width, int height);
-        static std::unordered_map<std::filesystem::path, Texture*> texturesMap;
+private:
+    Texture(SDL_Surface* surface);
+    static std::unordered_map<std::filesystem::path, Texture*> texturesMap;
 
-        GLuint id;
-        GLenum type;
+private:
+    class Impl;
+    std::unique_ptr<Impl> impl;
 
-        int width;
-        int height;
+};
 
-    };
 }

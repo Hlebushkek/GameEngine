@@ -5,10 +5,7 @@
 #include <vector>
 #include "Core.hpp"
 #include "Vertex.hpp"
-#include "Shader.hpp"
 #include "Texture.hpp"
-#include "Material.hpp"
-#include "Mesh.hpp"
 #include "Collider.hpp"
 #include "Ray.hpp"
 #include "Transform.hpp"
@@ -17,11 +14,15 @@
 namespace Engine
 {
 
+class Renderer;
+class Shader;
+class Mesh;
+
 class ENGINE_API GameObject : std::enable_shared_from_this<GameObject>
 {
 public:
     GameObject(glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
-    virtual ~GameObject() {}
+    virtual ~GameObject() = default;
 
     template <typename T, typename... Args>
     static std::shared_ptr<T> Instantiate(Args&&... args) {
@@ -32,7 +33,7 @@ public:
 
     std::shared_ptr<Transform> transform() { return m_transform; }
 
-    void AddMesh(Mesh *mesh) { this->meshes.push_back(mesh); }
+    void AddMesh(std::shared_ptr<Mesh> mesh) { this->meshes.push_back(mesh); }
     void AddTexture(Texture *texture) { this->textures.push_back(texture); }
     void SetTexture(Texture *texture, size_t index)
     {
@@ -50,7 +51,7 @@ public:
     //Virtual
     virtual void Initialize(std::shared_ptr<GameObject> object);
     
-    virtual void Render(Shader* shader);
+    virtual void Render(Renderer* renderer, Shader* shader);
     virtual void Update() {}
     virtual std::optional<Intersection> CollidesWith(const Ray& ray);
 
@@ -64,10 +65,9 @@ public:
 protected:
     std::shared_ptr<Transform> m_transform;
     Collider *collider;
-    std::vector<Mesh*> meshes;
+    std::vector<std::shared_ptr<Mesh>> meshes;
     std::vector<Texture*> textures;
-    
-    void UpdateUniforms(Shader* shader);
+
 };
 
 }

@@ -77,8 +77,8 @@ namespace Engine
     void Camera::updateMouseMotionInput(const float& dt, const int& offsetX, const int& offsetY)
     {
         m_transform->Rotate({
-            -static_cast<GLfloat>(offsetY * this->sensitivity * dt),
-            -static_cast<GLfloat>(offsetX * this->sensitivity * dt),
+            -static_cast<float>(offsetY * this->sensitivity * dt),
+            -static_cast<float>(offsetX * this->sensitivity * dt),
             0
         });
 

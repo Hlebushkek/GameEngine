@@ -8,40 +8,45 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <glad/glad.h>
-
 #include "Core.hpp"
+
+struct FrameData;
+struct MeshData;
+struct Material;
+
+#ifdef ENABLE_METAL
+namespace MTL { class Device; }
+#endif
 
 namespace Engine
 {
-    class ENGINE_API Shader
-    {
-    public:
-        Shader(const char* vertexFile, const char* fragmentFile, const char* geometryFile = "");
-        ~Shader();
 
-        void use();
-        void unuse();
+class Texture;
+struct Light;
 
-        void set1i(GLint value, const GLchar* name);
-        void set1f(GLfloat value, const GLchar* name);
+class ENGINE_API Shader
+{
+public:
+#ifdef ENABLE_METAL
+    Shader(const char* file);
+#else
+    Shader(const char* vertexFile, const char* fragmentFile, const char* geometryFile = "");
+#endif
+    ~Shader();
 
-        void setVec1f(GLfloat value, const GLchar* name);
-        void setVec2f(glm::fvec2 value, const GLchar* name);
-        void setVec3f(glm::fvec3 value, const GLchar* name);
-        void setVec4f(glm::fvec4 value, const GLchar* name);
+    void Use();
+    void Unuse();
 
-        void setMat3fv(glm::mat3 value, const GLchar* name, GLboolean transpose = GL_FALSE);
-        void setMat4fv(glm::mat4 value, const GLchar* name, GLboolean transpose = GL_FALSE);
-    private:
-        //Private member variables
-        GLuint id;
+    void SetFrameData(const FrameData& data);
+    void SetMeshData(const MeshData& data);
+    void SetMaterial(const Material& material);
+    void SetLights(const std::vector<Light*>& lights);
+    void SetTexture(Texture* texture, int index);
 
-        //Private Func
-        std::string loadShaderSource(const std::string& fileName);
-        GLuint loadShader(GLenum type, const std::string& fileName);
+private:
+    class Impl;
+    std::unique_ptr<Impl> impl;
 
-        void linkProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader);
+};
 
-    };
 }

@@ -4,7 +4,6 @@
 
 #include <assert.h>
 #include <iostream>
-#include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include <imgui.h>
 #include "Core.hpp"
@@ -16,8 +15,12 @@
 #include "ImGuiLayer.hpp"
 #include "OBJLoader.hpp"
 
+namespace MTL { class Device; class RenderPassDescriptor; class CommandQueue; }
+
 namespace Engine
 {
+    class Renderer;
+
     enum Shader_Enum { SHADER_CORE_PROGRAM = 0, SHADER_UI_PROGRAM };
     enum Texture_Enum { GRASS = 0 , GRASS_SPECULAR, BRICK, WOOD, PAVERN, BLOCKB};
     enum Material_Enum { MAT_0 = 0 };
@@ -32,16 +35,16 @@ namespace Engine
 
         void Run();
 
-        void AddLight(Light *light) { lights.push_back(light); }
+        void AddLight(Light* light) { lights.push_back(light); }
 
         static Application* Get() { return application; }
         Camera* GetCamera() { return &camera; }
 
         SDL_Window* GetWindow() { return window; }
-        SDL_GLContext& GetGLContext() { return glContext; }
+
         float GetDeltaTime() { return deltaTime; } // Todo: move it to some kind of time class
 
-        int GetWidth() { return frameBufferWidth; }
+        int GetWidth()  { return frameBufferWidth; }
         int GetHeight() { return frameBufferHeight; }
 
         bool IsWidnowGrabbed() { return windowGrab; }
@@ -68,7 +71,7 @@ namespace Engine
 
         //Window
         SDL_Window* window;
-        SDL_GLContext glContext;
+
         bool windowGrab = false;
 
         bool drawOnlyWireframes = false;
@@ -78,33 +81,23 @@ namespace Engine
         int frameBufferWidth;
         int frameBufferHeight;
 
-        //Layers
         LayerStack layerStack;
 
-        //Camera
         Camera camera;
 
-        //Matrices
-        glm::mat4 viewMatrix;
-        glm::vec3 camPosition;
-        glm::vec3 worldUp;
-        glm::vec3 camFront;
+        std::shared_ptr<Renderer> renderer;
 
+        glm::mat4 viewMatrix;
         glm::mat4 projectionMatrix;
+
         float fov;
         float nearPlane;
         float farPlane;
 
-        //Shaders
-        std::vector<Shader*> shaders;
-
-        //Materials
+        std::vector<std::shared_ptr<Shader>> shaders;
         std::vector<Material*> materials;
-
-        //Lights
         std::vector<Light*> lights;
 
-        //Event
         SDL_Event event;
 
         bool windowShouldClose = false;
@@ -116,9 +109,7 @@ namespace Engine
 
         //Inits
         void InitWindow(const char* title, uint32_t windowFlags);
-        void InitGLAD();
-        void InitOpenGLOptions();
-        void initMatrices();
+        void InitMatrices();
         void InitShaders();
         void InitMaterials();
 

@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include "UIObject.hpp"
 
 namespace Engine
@@ -10,7 +11,7 @@ namespace Engine
 
         this->InitVAO(primitive);
         
-        this->texture = Texture::LoadTexture(fileName, GL_TEXTURE_2D);
+        this->texture = Texture::LoadTexture(fileName);
     }
 
     UIObject::~UIObject()
@@ -60,27 +61,27 @@ namespace Engine
 
     void UIObject::Render(Shader* shader)
     {
-        this->UpdateModelMatrix();
-        this->UpdateUniforms(shader);
+        // this->UpdateModelMatrix();
+        // this->UpdateUniforms(shader);
 
-        shader->use();
+        // shader->use();
 
-        texture->bind(0);
+        // texture->bind(0);
 
-        glBindVertexArray(this->VAO);
+        // glBindVertexArray(this->VAO);
         
-        if (this->nrOfIndices == 0)
-            glDrawArrays(GL_TRIANGLES, 0, this->nrOfVertices);
-        else
-            glDrawElements(GL_TRIANGLES, this->nrOfIndices, GL_UNSIGNED_INT, 0);
+        // if (this->nrOfIndices == 0)
+        //     glDrawArrays(GL_TRIANGLES, 0, this->nrOfVertices);
+        // else
+        //     glDrawElements(GL_TRIANGLES, this->nrOfIndices, GL_UNSIGNED_INT, 0);
 
-        texture->unbind(0);
+        // texture->unbind(0);
 
-        //Cleanup
-        glBindVertexArray(0);
-        glUseProgram(0);
-        glActiveTexture(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        // //Cleanup
+        // glBindVertexArray(0);
+        // glUseProgram(0);
+        // glActiveTexture(0);
+        // glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void UIObject::UpdateModelMatrix()
@@ -95,6 +96,6 @@ namespace Engine
     
     void UIObject::UpdateUniforms(Shader* shader)
     {
-        shader->setMat4fv(this->modelMatrix, "ModelMatrix");
+        // shader->setMat4fv(this->modelMatrix, "ModelMatrix");
     }
 }

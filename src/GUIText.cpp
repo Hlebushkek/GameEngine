@@ -13,7 +13,7 @@ void GUIText::InnerRender()
         cursorPos = m_position;
     
     ImGui::SetCursorPos(cursorPos);
-    ImGui::Text(m_text.c_str());
+    ImGui::Text("%s", m_text.c_str());
 }
 
 }

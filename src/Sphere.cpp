@@ -9,7 +9,7 @@ namespace Engine
 Sphere::Sphere(float radius, int rings, int sectors) : Primitive()
 {
     std::vector<Vertex> vertices;
-    std::vector<GLuint> indices;
+    std::vector<unsigned> indices;
 
     int startRing = -rings / 2 + 1;
     int endRing = rings / 2 - 1;
@@ -55,7 +55,7 @@ Sphere::Sphere(float radius, int rings, int sectors) : Primitive()
     });
 
     //South Pole
-    for (int sector = 0; sector < sectors; sector++)
+    for (int sector = 1; sector < sectors; sector++)
     {
         indices.push_back(0);
         indices.push_back(sector);

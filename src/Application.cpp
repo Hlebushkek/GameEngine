@@ -1,5 +1,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include "Application.hpp"
+#include "Renderer.hpp"
+#include "ShaderTypesCommon.h"
 #include "Ray.hpp"
 #include "Rect.hpp"
 #include "Cube.hpp"
@@ -15,19 +17,18 @@ namespace Engine
         this->frameBufferWidth = this->windowWidth;
         this->frameBufferHeight = this->windowHeight;
 
-        this->camPosition = glm::vec3(0.f, 0.f, 1.f);
-        this->worldUp = glm::vec3(0.f, 1.f, 0.f);
-        this->camFront = glm::vec3(0.f, 0.f, -1.f);
-
         this->fov = 90.f;
         this->nearPlane = 0.01f;
         this->farPlane = 1000.f;
 
+#ifdef ENABLE_METAL
+        this->InitWindow(title, SDL_WINDOW_METAL | SDL_WINDOW_RESIZABLE);
+#else
         this->InitWindow(title, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+#endif
+        renderer = std::make_shared<Renderer>(window);
 
-        this->InitGLAD();
-        this->InitOpenGLOptions();
-        this->initMatrices();
+        this->InitMatrices();
         this->InitShaders();
         this->InitMaterials();
         this->InitUniforms();
@@ -42,17 +43,11 @@ namespace Engine
     }
 
     Application::~Application()
-    {        
+    {
         SDL_DestroyWindow(this->window);
-
-        for (size_t i = 0; i < this->shaders.size(); i++)
-            delete this->shaders[i];
         
         for (size_t i = 0; i < this->materials.size(); i++)
             delete this->materials[i];
-
-        for (size_t i = 0; i < this->lights.size(); i++)
-            delete this->lights[i];
     }
 
     void Application::Run()
@@ -65,80 +60,130 @@ namespace Engine
     {
         SDL_Init(SDL_INIT_EVERYTHING);
 
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
         window = SDL_CreateWindow(title, windowWidth, windowHeight, windowFlags);
         assert(this->window);
 
         SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
 
-        this->glContext = SDL_GL_CreateContext(window);
-        SDL_GL_MakeCurrent(window, glContext);
-
         SDL_PumpEvents();
     }
 
-    void Application::InitGLAD()
+    void Application::InitMatrices()
     {
-        int status = gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
-        assert(status);
-    }
-
-    void Application::InitOpenGLOptions()
-    {
-        glEnable(GL_DEPTH_TEST);
-
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
-        
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-
-    void Application::initMatrices()
-    {
-        this->viewMatrix = glm::mat4(1.f);
-        this->viewMatrix = glm::lookAt(this->camPosition, this->camPosition + this->camFront, this->worldUp);
+        this->viewMatrix = GetViewMatrix();
 
         this->projectionMatrix = glm::mat4(1.f);
-        this->projectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
+        this->projectionMatrix = glm::perspective(glm::radians(this->fov),
+            static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
             this->nearPlane, this->farPlane);
     }
 
     void Application::InitShaders()
     {
-        this->shaders.push_back(new Shader("vertex_shader.glsl", "fragment_shader.glsl"));
-        this->shaders.push_back(new Shader("ui_vertex_shader.glsl", "fragment_shader.glsl"));
+#ifdef ENABLE_METAL
+        shaders.emplace_back(std::make_shared<Shader>("Shaders.metal"));
+#else
+        shaders.emplace_back(std::make_shared<Shader>("vertex_shader.glsl", "fragment_shader.glsl"));
+        shaders.emplace_back(std::make_shared<Shader>("ui_vertex_shader.glsl", "fragment_shader.glsl"));
+#endif
     }
 
     void Application::InitMaterials()
     {
-        this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(10.f), glm::vec3(1.f),
-            0, 1));
+        this->materials.push_back(new Material{glm::vec3(0.1f), glm::vec3(10.f), glm::vec3(1.f)});
     }
 
     void Application::InitUniforms()
     {
-        Shader* core_program = this->shaders[SHADER_CORE_PROGRAM];
-        core_program->setMat4fv(this->viewMatrix, "ViewMatrix");
-        core_program->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
+        shaders[SHADER_CORE_PROGRAM]->SetFrameData({viewMatrix, projectionMatrix, camera.transform()->GetPosition(),
+            (unsigned)frameBufferWidth, (unsigned)frameBufferHeight});
+        shaders[SHADER_CORE_PROGRAM]->SetLights({});
+    }
 
-        for (size_t i = 0; i < lights.size(); i++)
-            lights[i]->SendToShader(*core_program, i);
-        for (size_t i = lights.size(); i < 20; i++)
+    void Application::PushLayer(std::shared_ptr<Layer> layer)
+    {
+        layerStack.PushLayer(layer);
+        layer->OnAttach();
+    }
+
+    void Application::PushOverlay(std::shared_ptr<Layer> overlay)
+    {
+        layerStack.PushOverlay(overlay);
+        overlay->OnAttach();
+    }
+
+    void Application::Update()
+    {
+        UpdateDeltaTime();
+        HandlEvents();
+        UpdateUniforms();
+
+        camera.Update();
+
+        shaders[SHADER_CORE_PROGRAM]->SetMaterial(*materials[MAT_0]);
+        // shaders[SHADER_UI_PROGRAM]->SetMaterial(*materials[MAT_0]);
+
+        renderer->PreRenderSetup();
         {
-            std::string uniformName = "lights[" + std::to_string(i) + "].";
-            core_program->set1i(0, (uniformName  + "type").c_str());
+            for (const auto& layer : layerStack)
+            {
+                layer->Update();
+                layer->Render(renderer.get(), shaders[SHADER_CORE_PROGRAM].get());
+            }
+
+            // for (const auto& layer : layerStack)
+            //     layer->RenderUI(this->shaders[SHADER_UI_PROGRAM]);
+
+            renderer->PreImGuiRenderSetup();
+            {
+                for (const auto& layer : layerStack)
+                    layer->OnImGuiRender();
+            }
+            renderer->PostImGuiRenderSetup();
+        }
+        renderer->PostRenderSetup();
+    }
+
+    void Application::HandlEvents()
+    {
+        this->inputHandler->Reset();
+        
+        while (SDL_PollEvent(&event))
+        {
+            this->imGuiLayer->OnEvent(event);
+            this->inputHandler->HandleInput(event);
+
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                ApplicationWillTerminate();
+                this->windowShouldClose = true;
+            }
         }
 
-        // Shader* ui_program = this->shaders[SHADER_UI_PROGRAM];
-        // ui_program->setVec3f(*this->lights[0]., "lightPos0");
+        if (inputHandler->GetKeyState(SDLK_ESCAPE) == KEY_DOWN)
+        {
+            SDL_Event event;
+            event.type = SDL_EVENT_QUIT;
+            SDL_PushEvent(&event);
+        }
+
+        if (inputHandler->GetKeyState(SDLK_e) == KEY_DOWN)
+        {
+            windowGrab = !windowGrab;
+            SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
+            SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
+        }
+
+        if (inputHandler->GetKeyState(SDLK_y) == KEY_DOWN)
+        {
+            drawOnlyWireframes = !drawOnlyWireframes;
+            renderer->SetOnlyWireframeMode(drawOnlyWireframes);
+        }
+
+        this->CastRay(KEY_RELEASED);
+        this->CastRay(KEY_DOWN);
+        this->CastRay(KEY_UP);
     }
 
     void Application::CastRay(InputState state)
@@ -211,139 +256,30 @@ namespace Engine
         }
     }
 
-    void Application::PushLayer(std::shared_ptr<Layer> layer)
-    {
-        layerStack.PushLayer(layer);
-        layer->OnAttach();
-    }
-
-    void Application::PushOverlay(std::shared_ptr<Layer> overlay)
-    {
-        layerStack.PushOverlay(overlay);
-        overlay->OnAttach();
-    }
-
-    void Application::Update()
-    {
-        glClearColor(0.2, 0.2, 0.2, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        this->UpdateDeltaTime();
-        this->HandlEvents();
-        this->UpdateUniforms();
-
-        this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-        this->materials[MAT_0]->sendToShader(*this->shaders[SHADER_UI_PROGRAM]);
-
-        camera.Update();
-
-        for (const auto& layer : layerStack)
-        {
-            layer->Update();
-            layer->Render(this->shaders[SHADER_CORE_PROGRAM]);
-        }
-
-        for (const auto& layer : layerStack)
-            layer->RenderUI(this->shaders[SHADER_UI_PROGRAM]);
-
-        imGuiLayer->Begin();
-        {
-            for (const auto& layer : layerStack)
-                layer->OnImGuiRender();
-        }
-        imGuiLayer->End();
-        
-        glFlush();
-
-        SDL_GL_SwapWindow(window);
-
-        glBindVertexArray(0);
-        glUseProgram(0);
-        glActiveTexture(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    void Application::HandlEvents()
-    {
-        this->inputHandler->Reset();
-        
-        while (SDL_PollEvent(&event))
-        {
-            this->imGuiLayer->OnEvent(event);
-            this->inputHandler->HandleInput(event);
-
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                ApplicationWillTerminate();
-                this->windowShouldClose = true;
-            }
-        }
-
-        if (inputHandler->GetKeyState(SDLK_ESCAPE) == KEY_DOWN)
-        {
-            SDL_Event event;
-            event.type = SDL_EVENT_QUIT;
-            SDL_PushEvent(&event);
-        }
-
-        if (inputHandler->GetKeyState(SDLK_e) == KEY_DOWN)
-        {
-            windowGrab = !windowGrab;
-            SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
-            SDL_SetRelativeMouseMode((SDL_bool)this->windowGrab);
-        }
-
-        if (inputHandler->GetKeyState(SDLK_y) == KEY_DOWN)
-        {
-            drawOnlyWireframes = !drawOnlyWireframes;
-            glPolygonMode(GL_FRONT_AND_BACK, drawOnlyWireframes ? GL_LINE : GL_FILL);
-        }
-
-        this->CastRay(KEY_RELEASED);
-        this->CastRay(KEY_DOWN);
-        this->CastRay(KEY_UP);
-    }
-
     void Application::UpdateDeltaTime()
     {
         Uint64 ticks = SDL_GetTicks();
         this->curTime = static_cast<float>(ticks) / 1000.;
         this->deltaTime = this->curTime - this->lastTime;
         this->lastTime = this->curTime;
-
-        // std::cout << "Ticks: " << ticks << std::endl;
-        // std::cout << "Delta Time: " << this->deltaTime << std::endl;
     }
 
     void Application::UpdateUniforms()
     {
-        //Update view matrix (camera)
-        this->viewMatrix = this->camera.getViewMatrix();
-
-        this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->viewMatrix, "ViewMatrix");
-        this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.transform()->GetPosition(), "cameraPos");
-
-        //Update size and projectionMatrix
         SDL_GetWindowSize(this->window, &this->windowWidth, &this->windowHeight);
         SDL_GetWindowSizeInPixels(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
-        glViewport(0, 0, this->frameBufferWidth, this->frameBufferHeight);
+
+        this->viewMatrix = this->camera.getViewMatrix();
 
         this->projectionMatrix = glm::mat4(1.f);
         this->projectionMatrix = glm::perspective(glm::radians(this->fov), static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
             this->nearPlane, this->farPlane);
-        this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->projectionMatrix, "ProjectionMatrix");
 
-        for (size_t i = 0; i < lights.size(); i++)
-            lights[i]->SendToShader(*this->shaders[SHADER_CORE_PROGRAM], i);
-        for (size_t i = lights.size(); i < 20; i++)
-        {
-            std::string uniformName = "lights[" + std::to_string(i) + "].";
-            this->shaders[SHADER_CORE_PROGRAM]->set1i(0, (uniformName  + "type").c_str());
-        }
+        shaders[SHADER_CORE_PROGRAM]->SetFrameData({viewMatrix, projectionMatrix, camera.transform()->GetPosition(),
+            (unsigned)frameBufferWidth, (unsigned)frameBufferHeight});
+
+        shaders[SHADER_CORE_PROGRAM]->SetLights(lights);
     }
     
-    glm::mat4 Application::GetViewMatrix()
-    {
-        return this->camera.getViewMatrix();
-    }
+    glm::mat4 Application::GetViewMatrix() { return this->camera.getViewMatrix(); }
 }

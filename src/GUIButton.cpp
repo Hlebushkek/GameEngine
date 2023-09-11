@@ -12,12 +12,12 @@ GUIButton::GUIButton(std::string title, const ImVec2& size, const std::string& i
     if (!iconSurface)
         return;
 
-    glGenTextures(1, &m_iconTextureID);
-    glBindTexture(GL_TEXTURE_2D, m_iconTextureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iconSurface->w, iconSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, iconSurface->pixels);
+    // glGenTextures(1, &m_iconTextureID);
+    // glBindTexture(GL_TEXTURE_2D, m_iconTextureID);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iconSurface->w, iconSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, iconSurface->pixels);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     SDL_DestroySurface(iconSurface);
 }

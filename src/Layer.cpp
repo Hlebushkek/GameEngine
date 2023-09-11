@@ -1,3 +1,4 @@
+#include "Renderer.hpp"
 #include "Layer.hpp"
 
 namespace Engine
@@ -27,13 +28,13 @@ namespace Engine
         //Check collision between objects
     }
 
-    void Layer::Render(Shader *shader)
+    void Layer::Render(Renderer* renderer, Shader* shader)
     {
         for (auto object : renderableObjects)
-            object->Render(shader);
+            object->Render(renderer, shader);
     }
 
-    void Layer::RenderUI(Shader* shader)
+    void Layer::RenderUI(Renderer* renderer, Shader* shader)
     {
         for (auto object : uiObjects)
             object->Render(shader);

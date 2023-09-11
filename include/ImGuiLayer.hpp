@@ -2,6 +2,8 @@
 
 #include "Layer.hpp"
 
+namespace MTL { class CommandBuffer; class RenderCommandEncoder; class RenderPassDescriptor; }
+
 namespace Engine
 {
     class ENGINE_API ImGuiLayer : public Layer
@@ -13,14 +15,6 @@ namespace Engine
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnEvent(SDL_Event& event) override;
-
-		void Begin();
-		void End();
-        
-        static ImGuiContext* GetImguiContext() { return imguiContext; }
-        
-    private:
-        static ImGuiContext* imguiContext;
     
     };
 }

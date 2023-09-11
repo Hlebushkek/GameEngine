@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "Core.hpp"
 
 struct SDL_Window;
 struct ImGuiContext;
@@ -15,7 +16,7 @@ class Primitive;
 
 struct RenderingContext;
 
-class Renderer
+class ENGINE_API Renderer
 {
 public:
     Renderer(SDL_Window* window);

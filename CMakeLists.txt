@@ -35,15 +35,10 @@ include_directories(
     vendors/metal-cpp/
 )
 
-#imgui
+file(GLOB SOURCES "src/*.cpp" "include/*.hpp" "include/*.h")
 file(GLOB IMGUI_SOURCES "vendors/imgui/*.cpp" "vendors/imgui/*.h"
     "vendors/imgui/backends/imgui_impl_sdl3.cpp" "vendors/imgui/backends/imgui_impl_sdl3.h"
-    "vendors/imgui/backends/imgui_impl_opengl3.cpp" "vendors/imgui/backends/imgui_impl_opengl3.h"
-    "vendors/imgui/backends/imgui_impl_metal.mm" "vendors/imgui/backends/imgui_impl_metal.h"
 )
-add_library(imgui STATIC ${IMGUI_SOURCES})
-
-file(GLOB SOURCES "src/*.cpp" "include/*.hpp" "include/*.h")
 
 if (APPLE)
     add_compile_definitions(ENABLE_METAL)
@@ -53,12 +48,18 @@ if (APPLE)
         "src/RenderingBackends/ShaderImplMetal.cpp"
         "src/RenderingBackends/TextureImplMetal.cpp"
         "src/RenderingBackends/MeshMetal.cpp")
+    list(APPEND IMGUI_SOURCES 
+        "vendors/imgui/backends/imgui_impl_metal.mm"
+        "vendors/imgui/backends/imgui_impl_metal.h")
 else()
     list(APPEND SOURCES 
         "src/RenderingBackends/RendererImplGL.cpp"
         "src/RenderingBackends/ShaderImplGL.cpp"
         "src/RenderingBackends/TextureImplGL.cpp"
         "src/RenderingBackends/MeshGL.cpp")
+    list(APPEND IMGUI_SOURCES 
+        "vendors/imgui/backends/imgui_impl_opengl3.cpp"
+        "vendors/imgui/backends/imgui_impl_opengl3.h")
 endif()
 
 link_directories(
@@ -66,6 +67,7 @@ link_directories(
     ${PROJECT_SOURCE_DIR}/../build/GameEngine/vendors/SDL_image/
 )
 
+add_library(imgui STATIC ${IMGUI_SOURCES})
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} glad)
